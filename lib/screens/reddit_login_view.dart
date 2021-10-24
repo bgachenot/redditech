@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'dart:math';
-import 'package:http/http.dart' as http;
 import 'package:redditech/model/User.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -45,23 +44,6 @@ class _RedditLoginViewState extends State<RedditLoginView> {
   final _callbackScheme = "://login";
   var _errorMsg = "";
 
-  Future<User> fetchUserData(token) async {
-    var response = await http.get(
-        Uri.parse('https://oauth.reddit.com/api/v1/me'),
-        headers: {'authorization': 'bearer ' + token});
-    Map<String, dynamic> d = jsonDecode(response.body);
-
-    User user = User(
-      name: d['name'],
-      namePrefixed: d['subreddit']['display_name_prefixed'],
-      description: d['subreddit']['description'],
-      banner: (d['subreddit']['banner_img'] as String).isEmpty ? false : true,
-      bannerURL: d['subreddit']['banner_img'],
-      iconURL: d['icon_img'],
-    );
-    return user;
-  }
-
   void _login() async {
     final _randomString = getRandomString(40);
     final authorizeUrl =
@@ -93,10 +75,9 @@ class _RedditLoginViewState extends State<RedditLoginView> {
       }
       _errorMsg = "";
       final storage = new FlutterSecureStorage();
-      await storage.write(key: 'access_token', value: _queryResult['access_token']);
+      await storage.write(
+          key: 'access_token', value: _queryResult['access_token']);
 
-      User user = await fetchUserData(_queryResult['access_token']);
-      print(user.toString());
       Navigator.pushReplacementNamed(context, "/main", arguments: {});
     } on PlatformException catch (_) {
       _errorMsg = "Aborted by user";

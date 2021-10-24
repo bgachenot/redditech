@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
 
 class LoadingView extends StatefulWidget {
   const LoadingView({Key? key}) : super(key: key);
@@ -11,9 +12,25 @@ class LoadingView extends StatefulWidget {
 
 class _LoadingViewState extends State<LoadingView> {
 
+  void fetchUserData(token) async {
+    var response = await http.get(
+        Uri.parse('https://oauth.reddit.com/api/v1/me'),
+        headers: {'authorization': 'bearer ' + token});
+  }
+
   void _load() async {
-    await Future.delayed(const Duration(seconds: 5));
-    Navigator.pushReplacementNamed(context, '/login', arguments: {});
+    final storage = new FlutterSecureStorage();
+    String? _accessToken = await storage.read(key: 'access_token');
+
+    if (_accessToken == null) {
+      await storage.deleteAll();
+      Navigator.pushReplacementNamed(context, '/login', arguments: {});
+    }
+    String? _permanentAccessToken = await storage.read(key: 'permanent_access_token');
+    if (_permanentAccessToken == null) {
+      // TODO: Get Permanent Access token here or later based on 401 error
+    }
+      Navigator.pushReplacementNamed(context, '/main', arguments: {});
   }
 
   @override
