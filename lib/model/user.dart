@@ -5,6 +5,8 @@ class User {
   final bool banner;
   final String bannerURL;
   final String iconURL;
+  final int totalKarma;
+  final double created;
 
   User({
     required this.name,
@@ -13,6 +15,8 @@ class User {
     required this.banner,
     required this.bannerURL,
     required this.iconURL,
+    required this.totalKarma,
+    required this.created,
   });
 
   Map<String, dynamic> toJson() {
@@ -23,6 +27,8 @@ class User {
       'banner': banner,
       'bannerURL': bannerURL,
       'iconURL': iconURL,
+      'totalKarma': totalKarma,
+      'created': created,
     };
   }
 
@@ -32,10 +38,12 @@ class User {
         description = res['description'],
         banner = res['banner'],
         bannerURL = res['bannerURL'],
-        iconURL = res['iconURL'];
+        iconURL = res['iconURL'],
+        totalKarma = res['totalKarma'],
+        created = res['created'];
 
   @override
   String toString() {
-    return 'User{name: $name, namePrefixed: $namePrefixed, description: $description, banner: $banner, bannerURL: $bannerURL, iconURL: $iconURL}';
+    return 'User{name: $name, namePrefixed: $namePrefixed, description: $description, banner: $banner, bannerURL: $bannerURL, iconURL: $iconURL, totalKarma: $totalKarma, created, $created}';
   }
 }
