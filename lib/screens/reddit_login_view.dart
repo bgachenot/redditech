@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'package:redditech/model/User.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ExceptionRandomString implements Exception {}
+
+class ExceptionUserRefused implements Exception {}
 
 const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
 Random _rng = Random();
@@ -13,16 +18,18 @@ Random _rng = Random();
 String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
     length, (_) => _chars.codeUnitAt(_rng.nextInt(_chars.length))));
 
-dynamic parseRedditAuthorizationResponse(List<String> _redditRawResponse) {
-  var tokenString = "{";
-  for (int i = 0; i != _redditRawResponse.length; i++) {
-    var key = _redditRawResponse[i].split('=')[0];
-    var value = _redditRawResponse[i].split('=')[1];
+Map<String, dynamic> parseRedditAuthorizationResponse(
+    String _redditRawResponse) {
+  final _redditSplitRawResponse = _redditRawResponse.split('&');
+  var _redditRawJsonResponse = "{";
+  for (int i = 0; i != _redditSplitRawResponse.length; i++) {
+    var key = _redditSplitRawResponse[i].split('=')[0];
+    var value = _redditSplitRawResponse[i].split('=')[1];
 
-    tokenString +=
-        '"$key": "$value"' + (i + 1 == _redditRawResponse.length ? '}' : ',');
+    _redditRawJsonResponse += '"$key": "$value"' +
+        (i + 1 == _redditSplitRawResponse.length ? '}' : ',');
   }
-  return jsonDecode(tokenString);
+  return jsonDecode(_redditRawJsonResponse);
 }
 
 class RedditLoginView extends StatefulWidget {
@@ -37,6 +44,23 @@ class _RedditLoginViewState extends State<RedditLoginView> {
   final _redirectURI = 'me.app.local';
   final _callbackScheme = "://login";
   var _errorMsg = "";
+
+  Future<User> fetchUserData(token) async {
+    var response = await http.get(
+        Uri.parse('https://oauth.reddit.com/api/v1/me'),
+        headers: {'authorization': 'bearer ' + token});
+    Map<String, dynamic> d = jsonDecode(response.body);
+
+    User user = User(
+      name: d['name'],
+      namePrefixed: d['subreddit']['display_name_prefixed'],
+      description: d['subreddit']['description'],
+      banner: (d['subreddit']['banner_img'] as String).isEmpty ? false : true,
+      bannerURL: d['subreddit']['banner_img'],
+      iconURL: d['icon_img'],
+    );
+    return user;
+  }
 
   void _login() async {
     final _randomString = getRandomString(40);
@@ -54,23 +78,38 @@ class _RedditLoginViewState extends State<RedditLoginView> {
         callbackUrlScheme: _redirectURI,
         preferEphemeral: true,
       );
-      final _redditRawResponse =
-          Uri.parse(_authenticateResult).fragment.split('&');
+      final _redditRawResponse = Uri.parse(_authenticateResult).fragment;
       final _queryResult = parseRedditAuthorizationResponse(_redditRawResponse);
 
-      // if the state isn't equal to the random string we sent,
+      //TODO: Handle other errors (client_id invalid, redirect_uri invalid)
+
+      // If the user pressed the refuse button
+      if (_queryResult['error'] == 'access_denied') {
+        throw ExceptionUserRefused();
+      }
+      // if the state isn't equal to the random string we sent, then warn the user
       if (_queryResult['state'] != _randomString) {
         throw ExceptionRandomString();
       }
-      //TODO: store the access_token to a local secure file
+      _errorMsg = "";
+      final storage = new FlutterSecureStorage();
+      await storage.write(key: 'access_token', value: _queryResult['access_token']);
+
+      User user = await fetchUserData(_queryResult['access_token']);
+      print(user.toString());
       Navigator.pushReplacementNamed(context, "/main", arguments: {});
     } on PlatformException catch (_) {
       _errorMsg = "Aborted by user";
+    } on ExceptionUserRefused catch (_) {
+      _errorMsg = "You refused the authentication. Please try again.";
     } on ExceptionRandomString catch (_) {
       _errorMsg = "Response from Reddit altered. Please try again.";
     } catch (e) {
-      _errorMsg = e.toString();
+      //TODO: Handle multi lines in order to display the error message to the end user.
+      print(e.toString());
+      //_errorMsg = e.toString();
     }
+    setState(() {});
   }
 
   @override
@@ -89,7 +128,7 @@ class _RedditLoginViewState extends State<RedditLoginView> {
         const SizedBox(height: 250),
         Center(
           child: Text(
-            "Error: " + _errorMsg,
+            _errorMsg,
             style: const TextStyle(color: Colors.red, fontSize: 18),
           ),
         ),

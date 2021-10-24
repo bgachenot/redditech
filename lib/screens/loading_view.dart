@@ -10,6 +10,7 @@ class LoadingView extends StatefulWidget {
 }
 
 class _LoadingViewState extends State<LoadingView> {
+
   void _load() async {
     await Future.delayed(const Duration(seconds: 5));
     Navigator.pushReplacementNamed(context, '/login', arguments: {});
