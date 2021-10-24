@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:redditech/widgets/navigation_bar.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
@@ -8,15 +9,9 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Redditech")),
-      body: Row(
-        children: const [
-          Text("Simple redditech MainView"),
-        ],
-      ),
-    );
+    return const BottomNavigationBarController();
   }
 }
