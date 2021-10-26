@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:redditech/model/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:redditech/widgets/loading_data.dart';
+import 'dart:async';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -13,10 +14,10 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  late final User _user;
-  late final List<dynamic> _trophies;
-  late final _createdAccountInDays;
-  var _initFinished = false;
+  late User _user;
+  late List<dynamic> _trophies;
+  late int _createdAccountInDays;
+  bool _initFinished = false;
   final ScrollController _controllerOne = ScrollController();
 
   Future<void> fetchUserTrophies(token) async {
@@ -29,9 +30,6 @@ class _ProfileViewState extends State<ProfileView> {
         });
     Map<String, dynamic> resp = jsonDecode(response.body);
     _trophies = resp['data']['trophies'];
-    _trophies.forEach((element) {
-      print(element);
-    });
   }
 
   Future<User> fetchUserData(token) async {
@@ -47,7 +45,7 @@ class _ProfileViewState extends State<ProfileView> {
     User user = User(
         name: resp['name'],
         namePrefixed: resp['subreddit']['display_name_prefixed'],
-        description: resp['subreddit']['description'],
+        description: resp['subreddit']['public_description'],
         banner:
             (resp['subreddit']['banner_img'] as String).isEmpty ? false : true,
         bannerURL: resp['subreddit']['banner_img'],
@@ -56,7 +54,8 @@ class _ProfileViewState extends State<ProfileView> {
         created: resp['created_utc']);
     return user;
   }
-  void initProfile() async {
+
+  Future<void> initProfile() async {
     final _storage = new FlutterSecureStorage();
     final _accessToken = await _storage.read(key: 'access_token');
     _user = await fetchUserData(_accessToken);
@@ -84,83 +83,95 @@ class _ProfileViewState extends State<ProfileView> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Profile"),
+          title: Text(_user.name),
           centerTitle: true,
         ),
         backgroundColor: Colors.grey[300],
-        body: Column(
-          children: [
-            Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                    image: NetworkImage(_user.iconURL),
-                    fit: BoxFit.fill,
-                    scale: 1),
-              ),
-            ),
-            Text(_user.name),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Karma: ' + _user.totalKarma.toString(),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
-                child: Text('Account created since ' +
-                    _createdAccountInDays.toString() +
-                    ' days'),
-              ),
-            ),
-            Text('Trophies'),
-            SizedBox(
-              height: 200,
-              child: ListView.builder(
-                shrinkWrap: true,
-                controller: _controllerOne,
-                itemCount: _trophies.length,
-                itemBuilder: (context, index) {
-                  var _trophyAge = 0;
-                  if (_trophies.elementAt(index)['data']['granted_at'] != null)
-                    _trophyAge = DateTime.now()
-                        .difference(DateTime.fromMillisecondsSinceEpoch(
-                            (_trophies.elementAt(index)['data']['granted_at'] *
-                                1000)))
-                        .inDays;
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Image.network(
-                              _trophies.elementAt(index)['data']['icon_70']),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                                _trophies.elementAt(index)['data']['name']),
-                          ),
-                          Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                _trophyAge.toString() + ' days ago',
-                                style: const TextStyle(color: Colors.purple),
-                              )),
-                        ],
+        body: RefreshIndicator(
+          onRefresh: () {
+            return initProfile();
+          },
+          child: ListView(
+            children: [
+              Container(
+                color: Colors.grey[600],
+                child: Stack(
+                  children: [
+                    Image.network(_user.bannerURL),
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(_user.iconURL),
+                        radius: 60,
                       ),
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
-            )
-          ],
+              Text('description: ' + _user.description),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Karma: ' + _user.totalKarma.toString(),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+                  child: Text('Account created since ' +
+                      _createdAccountInDays.toString() +
+                      ' days'),
+                ),
+              ),
+              Text('Trophies'),
+              SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: _controllerOne,
+                  itemCount: _trophies.length,
+                  itemBuilder: (context, index) {
+                    var _trophyAge = 0;
+                    if (_trophies.elementAt(index)['data']['granted_at'] !=
+                        null) {
+                      _trophyAge = DateTime.now()
+                          .difference(DateTime.fromMillisecondsSinceEpoch(
+                              (_trophies.elementAt(index)['data']
+                                      ['granted_at'] *
+                                  1000)))
+                          .inDays;
+                    }
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Image.network(
+                                _trophies.elementAt(index)['data']['icon_70']),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  _trophies.elementAt(index)['data']['name']),
+                            ),
+                            Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  _trophyAge.toString() + ' days ago',
+                                  style: const TextStyle(color: Colors.purple),
+                                )),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            ],
+          ),
         ),
       );
     }
