@@ -56,7 +56,6 @@ class _ProfileViewState extends State<ProfileView> {
         created: resp['created_utc']);
     return user;
   }
-
   void initProfile() async {
     final _storage = new FlutterSecureStorage();
     final _accessToken = await _storage.read(key: 'access_token');
@@ -129,10 +128,13 @@ class _ProfileViewState extends State<ProfileView> {
                 controller: _controllerOne,
                 itemCount: _trophies.length,
                 itemBuilder: (context, index) {
-                  var _trophyAge = DateTime.now()
-                      .difference(DateTime.fromMillisecondsSinceEpoch(
-                          (_trophies.elementAt(index)['data']['granted_at'] * 1000)))
-                      .inDays;
+                  var _trophyAge = 0;
+                  if (_trophies.elementAt(index)['data']['granted_at'] != null)
+                    _trophyAge = DateTime.now()
+                        .difference(DateTime.fromMillisecondsSinceEpoch(
+                            (_trophies.elementAt(index)['data']['granted_at'] *
+                                1000)))
+                        .inDays;
                   return Card(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -142,7 +144,8 @@ class _ProfileViewState extends State<ProfileView> {
                               _trophies.elementAt(index)['data']['icon_70']),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(_trophies.elementAt(index)['data']['name']),
+                            child: Text(
+                                _trophies.elementAt(index)['data']['name']),
                           ),
                           Align(
                               alignment: Alignment.bottomLeft,
