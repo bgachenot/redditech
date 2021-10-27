@@ -33,8 +33,7 @@ class NetworkHelper {
     return await storage.write(key: 'access_token', value: accessToken);
   }
 
-  Future<bool> login() async {
-    // https://www.reddit.com/api/v1/authorize?client_id=7sv_rACJq0_AD82DfuuUag&response_type=code&state=RANDOM_STRING&redirect_uri=https://google.com&scope=identity,read,account,creddits,edit,flair,history,livemanage,modconfig,modcontributors,modflair,modlog,modmail,modothers,modposts,modself,modwiki,mysubreddits,privatemessages,report,save,structuredstyles,submit,subscribe,vote,wikiedit,wikiread&duration=permanent
+  Future<bool> loginImplicitGrantFlow() async {
     final _randomString = getRandomString(40);
     final authorizeUrl =
         Uri.https('www.reddit.com', '/api/v1/authorize.compact', {
@@ -62,11 +61,65 @@ class NetworkHelper {
       if (_queryResult['state'] != _randomString) {
         throw ExceptionLoginRandomString();
       }
+      await _writeAccessToken(_queryResult['access_token']);
+      return true;
+    } on PlatformException catch (_) {
+      throw (Exception("Aborted by user"));
+    } on ExceptionLoginUserRefused catch (_) {
+      throw (Exception("You refused the authentication. Please try again."));
+    } on ExceptionLoginRandomString catch (_) {
+      throw (Exception("Response from Reddit altered. Please try again."));
+    } catch (e) {
+      //TODO: Handle multi lines in order to display the error message to the end user.
+    }
+    return false;
+  }
 
-      //await _writeAccessToken(_queryResult['access_token']);
-      await _writeAccessToken(
-          "737496854301-ZDGqrBFo3T5ELc2TnWc1FrWiGyyq_g"); // moi
-      //await _writeAccessToken("1675389028-KVyQnBTPNPlD3OXkxGxSTg8nLbVHWw"); // Noe
+  Future<bool> loginExplicitGrantFlow() async {
+    final _randomString = getRandomString(40);
+    final authorizeUrl =
+        Uri.https('www.reddit.com', '/api/v1/authorize.compact', {
+      'client_id': _clientID,
+      'response_type': 'code',
+      'state': _randomString,
+      'redirect_uri': _redirectURI + _callbackScheme,
+      'scope': 'identity read',
+    });
+    try {
+      final _authenticateResult = await FlutterWebAuth.authenticate(
+        url: authorizeUrl.toString(),
+        callbackUrlScheme: _redirectURI,
+        preferEphemeral: true,
+      );
+      final _redditRawResponse = Uri.parse(_authenticateResult).query;
+      final _queryResult = parseRedditAuthorizationResponse(_redditRawResponse);
+      //TODO: Handle other errors (client_id invalid, redirect_uri invalid)
+      // If the user pressed the refuse button
+      if (_queryResult['error'] == 'access_denied') {
+        throw ExceptionLoginUserRefused();
+      }
+      // if the state isn't equal to the random string we sent, then warn the user
+      if (_queryResult['state'] != _randomString) {
+        throw ExceptionLoginRandomString();
+      }
+
+      var response = await http.post(
+        Uri.parse('https://www.reddit.com/api/v1/access_token'),
+        headers: {
+          'Authorization': 'Basic ' + base64Encode(utf8.encode(_clientID + ':')),
+          'User-Agent':
+              'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: {
+          'grant_type': 'authorization_code',
+          'code': _queryResult['code'],
+          'redirect_uri': _redirectURI + _callbackScheme,
+        },
+        encoding: Encoding.getByName("utf-8"),
+      );
+      final _accessResponse = jsonDecode(response.body);
+      await _writeAccessToken(_accessResponse['access_token']);
       return true;
     } on PlatformException catch (_) {
       throw (Exception("Aborted by user"));
