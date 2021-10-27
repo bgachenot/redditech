@@ -17,7 +17,8 @@ class _FeedViewState extends State<FeedView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('feed'),
+        title: Text(_best ? 'Best posts for you' : _popular ? 'Popular posts for you' : 'New posts for you'),
+        centerTitle: true,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -36,7 +37,10 @@ class _FeedViewState extends State<FeedView> {
                   child: InkWell(
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () {
-                      print('Best');
+                      _best = true;
+                      _popular = false;
+                      _new = false;
+                      setState(() {});
                     },
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.30,
@@ -49,7 +53,10 @@ class _FeedViewState extends State<FeedView> {
                   child: InkWell(
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () {
-                      print('Popular');
+                      _best = false;
+                      _popular = true;
+                      _new = false;
+                      setState(() {});
                     },
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.30,
@@ -62,7 +69,10 @@ class _FeedViewState extends State<FeedView> {
                   child: InkWell(
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () {
-                      print('New');
+                      _best = false;
+                      _popular = false;
+                      _new = true;
+                      setState(() {});
                     },
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.30,
@@ -76,7 +86,7 @@ class _FeedViewState extends State<FeedView> {
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height - 230,
-            child: (_popular) ? BestPostsView() : BestPostsView(),
+            child: (_best) ? BestPostsView() : (_popular) ? SizedBox.shrink() : SizedBox.shrink(),
           )
         ],
       ),
