@@ -11,7 +11,6 @@ class LoadingView extends StatefulWidget {
 }
 
 class _LoadingViewState extends State<LoadingView> {
-
   void fetchUserData(token) async {
     var response = await http.get(
         Uri.parse('https://oauth.reddit.com/api/v1/me'),
@@ -26,11 +25,7 @@ class _LoadingViewState extends State<LoadingView> {
       await storage.deleteAll();
       Navigator.pushReplacementNamed(context, '/login', arguments: {});
     }
-    String? _permanentAccessToken = await storage.read(key: 'permanent_access_token');
-    if (_permanentAccessToken == null) {
-      // TODO: Get Permanent Access token here or later based on 401 error
-    }
-      Navigator.pushReplacementNamed(context, '/main', arguments: {});
+    Navigator.pushReplacementNamed(context, '/login', arguments: {});
   }
 
   @override
