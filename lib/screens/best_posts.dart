@@ -40,50 +40,58 @@ class _BestPostsViewState extends State<BestPostsView> {
                 thickness: 2.5,
               ),
           itemBuilder: (context, index) {
-            return Column(
-              children: [
-                Card(
-                  child: InkWell(
-                    onTap: () {
-                      print(_posts.elementAt(index).num_comments);
-                    },
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
-                          leading: Image.network(_posts
-                                  .elementAt(index)
-                                  .subReddit
-                                  .community_icon_url ??
-                              _posts.elementAt(index).subReddit.icon_img),
-                          title: Text(_posts
-                              .elementAt(index)
-                              .subReddit
-                              .display_name_prefixed),
-                          subtitle: Text('u/' + _posts.elementAt(index).author),
-                        ),
-                        ListTile(
-                          trailing: (_posts.elementAt(index).preview == null)
-                              ? SizedBox.shrink()
-                              : Image.network(_posts.elementAt(index).preview!),
-                          title: Text(_posts.elementAt(index).title),
-                          onTap: () {},
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            const Icon(
-                              IconData(58353, fontFamily: 'MaterialIcons'),
-                            ),
-                            Text(
-                              _posts.elementAt(index).num_comments.toString(),
-                            ),
-                          ],
-                        ),
-                      ],
+            return RefreshIndicator(
+              onRefresh: () {
+                return initPosts();
+              },
+              child: Column(
+                children: [
+                  Card(
+                    child: InkWell(
+                      onTap: () {
+                        print(_posts.elementAt(index).num_comments);
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            leading: Image.network(_posts
+                                    .elementAt(index)
+                                    .subReddit
+                                    .community_icon_url ??
+                                _posts.elementAt(index).subReddit.icon_img),
+                            title: Text(_posts
+                                .elementAt(index)
+                                .subReddit
+                                .display_name_prefixed),
+                            subtitle:
+                                Text('u/' + _posts.elementAt(index).author),
+                            trailing: Icon(Icons.arrow_forward),
+                            onTap: () {},
+                          ),
+                          ListTile(
+                            trailing: (_posts.elementAt(index).preview == null)
+                                ? SizedBox.shrink()
+                                : Image.network(
+                                    _posts.elementAt(index).preview!),
+                            title: Text(_posts.elementAt(index).title),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              const Icon(
+                                IconData(58353, fontFamily: 'MaterialIcons'),
+                              ),
+                              Text(
+                                _posts.elementAt(index).num_comments.toString(),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           });
     }
