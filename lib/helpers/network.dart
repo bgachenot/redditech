@@ -189,6 +189,24 @@ class NetworkHelper {
     return user;
   }
 
+  Future<String> getSubRedditIcon(String subRedditName) async {
+    var response = await http.get(
+      Uri.parse('https://www.reddit.com/r/$subRedditName/about.json?raw_json=1'),
+      headers: {
+        'User-Agent':
+        'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+      },
+    );
+    Map<String, dynamic> resp = jsonDecode(response.body);
+    if (resp['data']['community_icon'] != '') {
+      return resp['data']['community_icon'];
+    }
+    if (resp['data']['icon_img'] != '') {
+      return resp['data']['icon_img'];
+    }
+    return '';
+  }
+
   Future<List<SubRedditSearch>> fetchSubreddits(String query) async {
     List<SubRedditSearch> _subreddits = [];
     String _token = (await _getAccessToken())!;
@@ -212,9 +230,10 @@ class NetworkHelper {
     Map<String, dynamic> resp = jsonDecode(response.body);
 
     for (var element in resp['subreddits']) {
+      String _iconImg = await getSubRedditIcon(element['name']);
       SubRedditSearch _subreddit = SubRedditSearch(
           active_user_count: element['active_user_count'],
-          icon_img: element['icon_img'],
+          icon_img: _iconImg,
           name: element['name'],
           subscriber_count: element['subscriber_count']);
       _subreddits.add(_subreddit);
