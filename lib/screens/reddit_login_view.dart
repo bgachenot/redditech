@@ -9,15 +9,12 @@ class RedditLoginView extends StatefulWidget {
 }
 
 class _RedditLoginViewState extends State<RedditLoginView> {
-  final _clientID = 'YK5qJlf5QStaQaNI0HmSXg';
-  final _redirectURI = 'me.app.local';
-  final _callbackScheme = "://login";
   final _networkHelper = NetworkHelper();
   var _errorMsg = "";
 
   void _login() async {
     try {
-      await _networkHelper.login();
+      await _networkHelper.loginExplicitGrantFlow();
       Navigator.pushReplacementNamed(context, "/main", arguments: {});
     } catch (e) {
       //TODO: Handle multi lines in order to display the error message to the end user.
