@@ -22,9 +22,6 @@ class _LoadingDataScreenState extends State<LoadingDataScreen> {
           height: 200,
         ),
         spinKit,
-        SizedBox(
-          height: 150,
-        ),
         Padding(
           padding: EdgeInsets.all(8.0),
           child: Text("Fetching data...."),

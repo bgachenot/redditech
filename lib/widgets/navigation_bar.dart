@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:redditech/screens/feed_view.dart';
 import 'package:redditech/screens/profile_view.dart';
 
 class BottomNavigationBarController extends StatefulWidget {
@@ -16,7 +17,7 @@ class _BottomNavigationBarControllerState
     const ProfileView(
       key: PageStorageKey('profile'),
     ),
-    const SecondPage(
+    const FeedView(
       key: PageStorageKey('feed'),
     ),
   ];
@@ -48,25 +49,6 @@ class _BottomNavigationBarControllerState
         child: pages[_selectedIndex],
         bucket: bucket,
       ),
-    );
-  }
-}
-
-class SecondPage extends StatelessWidget {
-  const SecondPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Second Screen"),
-      ),
-      body: ListView.builder(itemBuilder: (context, index) {
-        return ListTile(
-          title: const Text('Lorem Ipsum'),
-          subtitle: Text('$index'),
-        );
-      }),
     );
   }
 }
