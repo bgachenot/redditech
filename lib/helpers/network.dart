@@ -8,6 +8,7 @@ import 'package:redditech/helpers/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:redditech/model/posts.dart';
 import 'package:redditech/model/subreddit.dart';
+import 'package:redditech/model/subreddit_search.dart';
 import 'package:redditech/model/trophies.dart';
 import 'package:redditech/model/user.dart';
 
@@ -106,7 +107,8 @@ class NetworkHelper {
       var response = await http.post(
         Uri.parse('https://www.reddit.com/api/v1/access_token'),
         headers: {
-          'Authorization': 'Basic ' + base64Encode(utf8.encode(_clientID + ':')),
+          'Authorization':
+              'Basic ' + base64Encode(utf8.encode(_clientID + ':')),
           'User-Agent':
               'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
           "Content-Type": "application/x-www-form-urlencoded",
@@ -185,6 +187,39 @@ class NetworkHelper {
         totalKarma: resp['total_karma'],
         created: resp['created_utc']);
     return user;
+  }
+
+  Future<List<SubRedditSearch>> fetchSubreddits(String query) async {
+    List<SubRedditSearch> _subreddits = [];
+    String _token = (await _getAccessToken())!;
+    var response = await http.post(
+      Uri.parse('https://oauth.reddit.com/api/search_subreddits'),
+      headers: {
+        'authorization': 'bearer ' + _token,
+        'User-Agent':
+            'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+      },
+      body: {
+        'exact': 'false',
+        'include_over_18': 'false',
+        'include_unadvertisable': 'false',
+        'query': query,
+      },
+    );
+    if (response.statusCode == 401) {
+      throw ExceptionLoginInvalid();
+    }
+    Map<String, dynamic> resp = jsonDecode(response.body);
+
+    for (var element in resp['subreddits']) {
+      SubRedditSearch _subreddit = SubRedditSearch(
+          active_user_count: element['active_user_count'],
+          icon_img: element['icon_img'],
+          name: element['name'],
+          subscriber_count: element['subscriber_count']);
+      _subreddits.add(_subreddit);
+    }
+    return _subreddits;
   }
 
   Future<SubReddit> fetchSubredditData(subreddit_name) async {
