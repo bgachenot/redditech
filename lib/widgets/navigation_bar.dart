@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:redditech/screens/feed_view.dart';
 import 'package:redditech/screens/profile_view.dart';
+import 'package:redditech/screens/search_view.dart';
 
 class BottomNavigationBarController extends StatefulWidget {
   const BottomNavigationBarController({Key? key}) : super(key: key);
@@ -20,6 +21,9 @@ class _BottomNavigationBarControllerState
     const FeedView(
       key: PageStorageKey('feed'),
     ),
+    const SearchView(
+      key: PageStorageKey('search'),
+    ),
   ];
 
   final PageStorageBucket bucket = PageStorageBucket();
@@ -37,6 +41,10 @@ class _BottomNavigationBarControllerState
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Feed',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
           ),
         ],
       );
