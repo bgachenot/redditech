@@ -28,7 +28,7 @@ class _BottomNavigationBarControllerState
 
   final PageStorageBucket bucket = PageStorageBucket();
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   Widget _bottomNavigationBar(int selectedIndex) => BottomNavigationBar(
         onTap: (int index) => setState(() => _selectedIndex = index),
