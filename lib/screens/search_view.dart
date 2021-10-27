@@ -42,14 +42,27 @@ class _SearchViewState extends State<SearchView> {
               },
             ),
           ),
-          ListView.builder(
-              itemCount: _subReddits.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: Text(_subReddits.elementAt(index).name),
-                );
-              }),
+          Container(
+            height: MediaQuery.of(context).size.height - 200,
+            child: ListView.builder(
+                itemCount: _subReddits.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                      leading: (_subReddits
+                          .elementAt(index)
+                          .icon_img != '') ? Image.network(_subReddits
+                          .elementAt(index)
+                          .icon_img!) : SizedBox.shrink()
+                  ,
+                  title: Text(_subReddits.elementAt(index).name),
+                  // subtitle:
+                  // Text('u/' + _posts.elementAt(index).author),
+                  trailing: Icon(Icons.arrow_forward),
+                  onTap: () {},
+                  );
+                }),
+          ),
         ],
       ),
     );
