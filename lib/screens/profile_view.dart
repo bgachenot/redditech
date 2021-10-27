@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:redditech/helpers/network.dart';
+import 'package:redditech/model/trophies.dart';
 import 'package:redditech/model/user.dart';
-import 'package:http/http.dart' as http;
 import 'package:redditech/widgets/loading_data.dart';
 import 'dart:async';
 
@@ -14,52 +13,16 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  final _networkHelper = NetworkHelper();
   late User _user;
-  late List<dynamic> _trophies;
+  late List<Trophies> _trophies;
   late int _createdAccountInDays;
   bool _initFinished = false;
   final ScrollController _controllerOne = ScrollController();
 
-  Future<void> fetchUserTrophies(token) async {
-    var response = await http.get(
-        Uri.parse('https://oauth.reddit.com/api/v1/me/trophies?raw_json=1'),
-        headers: {
-          'authorization': 'bearer ' + token,
-          'User-Agent':
-              'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
-        });
-    Map<String, dynamic> resp = jsonDecode(response.body);
-    _trophies = resp['data']['trophies'];
-  }
-
-  Future<User> fetchUserData(token) async {
-    var response = await http.get(
-        Uri.parse('https://oauth.reddit.com/api/v1/me?raw_json=1'),
-        headers: {
-          'authorization': 'bearer ' + token,
-          'User-Agent':
-              'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
-        });
-    Map<String, dynamic> resp = jsonDecode(response.body);
-
-    User user = User(
-        name: resp['name'],
-        namePrefixed: resp['subreddit']['display_name_prefixed'],
-        description: resp['subreddit']['public_description'],
-        banner:
-            (resp['subreddit']['banner_img'] as String).isEmpty ? false : true,
-        bannerURL: resp['subreddit']['banner_img'],
-        iconURL: resp['icon_img'],
-        totalKarma: resp['total_karma'],
-        created: resp['created_utc']);
-    return user;
-  }
-
   Future<void> initProfile() async {
-    final _storage = new FlutterSecureStorage();
-    final _accessToken = await _storage.read(key: 'access_token');
-    _user = await fetchUserData(_accessToken);
-    await fetchUserTrophies(_accessToken);
+    _user = await _networkHelper.fetchUserData();
+    _trophies = await _networkHelper.fetchUserTrophies();
     _initFinished = true;
 
     DateTime _accountCreatedSince = DateTime.fromMillisecondsSinceEpoch(
@@ -97,7 +60,7 @@ class _ProfileViewState extends State<ProfileView> {
                 color: Colors.grey[600],
                 child: Stack(
                   children: [
-                    Image.network(_user.bannerURL),
+                    if(_user.banner == true) Image.network(_user.bannerURL),
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: CircleAvatar(
@@ -136,12 +99,10 @@ class _ProfileViewState extends State<ProfileView> {
                   itemCount: _trophies.length,
                   itemBuilder: (context, index) {
                     var _trophyAge = 0;
-                    if (_trophies.elementAt(index)['data']['granted_at'] !=
-                        null) {
+                    if (_trophies.elementAt(index).granted_at != 99999999) {
                       _trophyAge = DateTime.now()
                           .difference(DateTime.fromMillisecondsSinceEpoch(
-                              (_trophies.elementAt(index)['data']
-                                      ['granted_at'] *
+                              (_trophies.elementAt(index).granted_at *
                                   1000)))
                           .inDays;
                     }
@@ -151,11 +112,11 @@ class _ProfileViewState extends State<ProfileView> {
                         child: Row(
                           children: [
                             Image.network(
-                                _trophies.elementAt(index)['data']['icon_70']),
+                                _trophies.elementAt(index).icon_70_url),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  _trophies.elementAt(index)['data']['name']),
+                                  _trophies.elementAt(index).name),
                             ),
                             Align(
                                 alignment: Alignment.bottomLeft,
