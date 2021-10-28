@@ -18,7 +18,7 @@ class _FeedViewState extends State<FeedView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_best ? 'Best posts for you' : _top ? 'Popular posts for you' : 'New posts for you'),
+        title: Text(_best ? 'Best posts for you' : _top ? 'Top posts for you' : 'New posts for you'),
         centerTitle: true,
       ),
       body: Column(
