@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:outline_search_bar/outline_search_bar.dart';
 import 'package:redditech/helpers/network.dart';
 import 'package:redditech/helpers/utils.dart';
+import 'package:redditech/model/subreddit.dart';
 import 'package:redditech/model/subreddit_search.dart';
 
 class SearchView extends StatefulWidget {
@@ -19,7 +20,8 @@ class _SearchViewState extends State<SearchView> {
     try {
       _subReddits = await _networkHelper.fetchSubreddits(query);
     } on ExceptionLoginInvalid catch (e) {
-      Navigator.pushReplacementNamed(context, '/login', arguments: {'_error': 'Authentication expired.'});
+      Navigator.pushReplacementNamed(context, '/login',
+          arguments: {'_error': 'Authentication expired.'});
     }
     setState(() {});
   }
@@ -47,24 +49,26 @@ class _SearchViewState extends State<SearchView> {
               },
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height - 200,
+          Expanded(
             child: ListView.builder(
                 itemCount: _subReddits.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ListTile(
-                      leading: (_subReddits
-                          .elementAt(index)
-                          .icon_img != '') ? Image.network(_subReddits
-                          .elementAt(index)
-                          .icon_img!) : SizedBox.shrink()
-                  ,
-                  title: Text(_subReddits.elementAt(index).name),
-                  // subtitle:
-                  // Text('u/' + _posts.elementAt(index).author),
-                  trailing: Icon(Icons.arrow_forward),
-                  onTap: () {},
+                    leading: (_subReddits.elementAt(index).icon_img != '')
+                        ? Image.network(_subReddits.elementAt(index).icon_img!)
+                        : SizedBox.shrink(),
+                    title: Text(_subReddits.elementAt(index).name),
+                    // subtitle:
+                    // Text('u/' + _posts.elementAt(index).author),
+                    trailing: Icon(Icons.arrow_forward),
+                    onTap: () async {
+                      SubReddit _subreddit =
+                          await _networkHelper.fetchSubredditData(
+                              _subReddits.elementAt(index).name);
+                      Navigator.pushNamed(context, '/subreddit',
+                          arguments: {'subreddit': _subreddit});
+                    },
                   );
                 }),
           ),
