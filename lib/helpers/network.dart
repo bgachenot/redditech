@@ -270,14 +270,14 @@ class NetworkHelper {
     return _subreddit;
   }
 
-  Future<List<Posts>> fetchUserBestPosts() async {
+  Future<List<Posts>> fetchUserPosts(String endpoint) async {
     String _token = (await _getAccessToken())!;
     var response = await http.get(
-        Uri.parse('https://oauth.reddit.com/best?raw_json=1&limit=5'),
+        Uri.parse('https://oauth.reddit.com/$endpoint?raw_json=1&limit=5'),
         headers: {
           'authorization': 'bearer ' + _token,
           'User-Agent':
-              'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+          'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
         });
     if (response.statusCode == 401) {
       throw ExceptionLoginInvalid();
@@ -289,113 +289,7 @@ class NetworkHelper {
     List<dynamic> toto = resp['data']['children'];
     for (var element in toto) {
       SubReddit _subreddit =
-          await fetchSubredditData(element['data']['subreddit']);
-      late String? _preview;
-      if ((element['data'] as Map<String, dynamic>).containsKey('preview')) {
-        _preview = element['data']['preview']['images'][0]['source']['url'];
-      } else {
-        _preview = null;
-      }
-      // TODO: Check if we can GET the image of if we get a 403 Varnish Cache error
-      Posts _post = Posts(
-        title: element['data']['title'],
-        selftext: element['data']['selftext'],
-        created_at: element['data']['created'],
-        author: element['data']['author'],
-        author_fullname: element['data']['author_fullname'],
-        permalink: element['data']['permalink'],
-        preview: _preview,
-        thumbnail_url: element['data']['thumbnail'],
-        thumbnail_height: element['data']['thumbnail_height'],
-        thumbnail_width: element['data']['thumbnail_width'],
-        ups: element['data']['ups'],
-        allow_live_comments: element['data']['allow_live_comments'],
-        locked: element['data']['locked'],
-        subreddit: element['data']['subreddit'],
-        subreddit_name_prefixed: element['data']['subreddit_name_prefixed'],
-        subreddit_id: element['data']['subreddit_id'],
-        id: element['data']['id'],
-        num_comments: element['data']['num_comments'],
-        subReddit: _subreddit,
-      );
-      _posts.add(_post);
-    }
-    return _posts;
-  }
-
-  Future<List<Posts>> fetchUserTopPosts() async {
-    String _token = (await _getAccessToken())!;
-    var response = await http.get(
-        Uri.parse('https://oauth.reddit.com/top?raw_json=1&limit=5'),
-        headers: {
-          'authorization': 'bearer ' + _token,
-          'User-Agent':
-              'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
-        });
-    if (response.statusCode == 401) {
-      throw ExceptionLoginInvalid();
-    }
-    Map<String, dynamic> resp = jsonDecode(response.body);
-    // TODO: static which keeps resp['data']['after'] for pagination
-
-    List<Posts> _posts = [];
-    List<dynamic> toto = resp['data']['children'];
-    for (var element in toto) {
-      SubReddit _subreddit =
-          await fetchSubredditData(element['data']['subreddit']);
-      late String? _preview;
-      if ((element['data'] as Map<String, dynamic>).containsKey('preview')) {
-        _preview = element['data']['preview']['images'][0]['source']['url'];
-      } else {
-        _preview = null;
-      }
-      // TODO: Check if we can GET the image of if we get a 403 Varnish Cache error
-      Posts _post = Posts(
-        title: element['data']['title'],
-        selftext: element['data']['selftext'],
-        created_at: element['data']['created'],
-        author: element['data']['author'],
-        author_fullname: element['data']['author_fullname'],
-        permalink: element['data']['permalink'],
-        preview: _preview,
-        thumbnail_url: element['data']['thumbnail'],
-        thumbnail_height: element['data']['thumbnail_height'],
-        thumbnail_width: element['data']['thumbnail_width'],
-        ups: element['data']['ups'],
-        allow_live_comments: element['data']['allow_live_comments'],
-        locked: element['data']['locked'],
-        subreddit: element['data']['subreddit'],
-        subreddit_name_prefixed: element['data']['subreddit_name_prefixed'],
-        subreddit_id: element['data']['subreddit_id'],
-        id: element['data']['id'],
-        num_comments: element['data']['num_comments'],
-        subReddit: _subreddit,
-      );
-      _posts.add(_post);
-    }
-    return _posts;
-  }
-
-  Future<List<Posts>> fetchUserNewPosts() async {
-    String _token = (await _getAccessToken())!;
-    var response = await http.get(
-        Uri.parse('https://oauth.reddit.com/new?raw_json=1&limit=5'),
-        headers: {
-          'authorization': 'bearer ' + _token,
-          'User-Agent':
-              'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
-        });
-    if (response.statusCode == 401) {
-      throw ExceptionLoginInvalid();
-    }
-    Map<String, dynamic> resp = jsonDecode(response.body);
-    // TODO: static which keeps resp['data']['after'] for pagination
-
-    List<Posts> _posts = [];
-    List<dynamic> toto = resp['data']['children'];
-    for (var element in toto) {
-      SubReddit _subreddit =
-          await fetchSubredditData(element['data']['subreddit']);
+      await fetchSubredditData(element['data']['subreddit']);
       late String? _preview;
       if ((element['data'] as Map<String, dynamic>).containsKey('preview')) {
         _preview = element['data']['preview']['images'][0]['source']['url'];
