@@ -11,6 +11,7 @@ class RedditLoginView extends StatefulWidget {
 class _RedditLoginViewState extends State<RedditLoginView> {
   final _networkHelper = NetworkHelper();
   var _errorMsg = "";
+  Map _data = {};
 
   void _login() async {
     try {
@@ -25,6 +26,10 @@ class _RedditLoginViewState extends State<RedditLoginView> {
 
   @override
   Widget build(BuildContext context) {
+    _data = _data.isNotEmpty
+        ? _data
+        : ModalRoute.of(context)!.settings.arguments as Map;
+    _errorMsg = _data['error'];
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(

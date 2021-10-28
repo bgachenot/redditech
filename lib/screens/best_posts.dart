@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:redditech/helpers/network.dart';
+import 'package:redditech/helpers/utils.dart';
 import 'package:redditech/model/posts.dart';
 import 'package:redditech/widgets/loading_data.dart';
 
@@ -16,7 +17,11 @@ class _BestPostsViewState extends State<BestPostsView> {
   List<Posts> _posts = [];
 
   Future<void> initPosts() async {
-    _posts = await _networkHelper.fetchUserBestPosts();
+    try {
+      _posts = await _networkHelper.fetchUserBestPosts();
+    } on ExceptionLoginInvalid catch (e) {
+      Navigator.pushReplacementNamed(context, '/login', arguments: {'error': 'Authentication expired.'});
+    }
     _initFinished = true;
     setState(() {});
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:redditech/helpers/network.dart';
+import 'package:redditech/helpers/utils.dart';
 import 'package:redditech/model/trophies.dart';
 import 'package:redditech/model/user.dart';
 import 'package:redditech/widgets/loading_data.dart';
@@ -21,8 +22,12 @@ class _ProfileViewState extends State<ProfileView> {
   final ScrollController _controllerOne = ScrollController();
 
   Future<void> initProfile() async {
-    _user = await _networkHelper.fetchUserData();
-    _trophies = await _networkHelper.fetchUserTrophies();
+    try {
+      _user = await _networkHelper.fetchUserData();
+      _trophies = await _networkHelper.fetchUserTrophies();
+    } on ExceptionLoginInvalid catch (e) {
+      Navigator.pushReplacementNamed(context, '/login', arguments: {'error': 'Authentication expired.'});
+    }
     _initFinished = true;
 
     DateTime _accountCreatedSince = DateTime.fromMillisecondsSinceEpoch(

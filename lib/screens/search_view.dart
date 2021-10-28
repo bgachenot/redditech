@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:outline_search_bar/outline_search_bar.dart';
 import 'package:redditech/helpers/network.dart';
+import 'package:redditech/helpers/utils.dart';
 import 'package:redditech/model/subreddit_search.dart';
 
 class SearchView extends StatefulWidget {
@@ -15,7 +16,11 @@ class _SearchViewState extends State<SearchView> {
   List<SubRedditSearch> _subReddits = [];
 
   Future<void> getSubreddits(query) async {
-    _subReddits = await _networkHelper.fetchSubreddits(query);
+    try {
+      _subReddits = await _networkHelper.fetchSubreddits(query);
+    } on ExceptionLoginInvalid catch (e) {
+      Navigator.pushReplacementNamed(context, '/login', arguments: {'_error': 'Authentication expired.'});
+    }
     setState(() {});
   }
 
