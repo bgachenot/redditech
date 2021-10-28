@@ -39,6 +39,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   outline_search_bar: ^2.2.0
   no_internet_check: ^0.0.4
+  font_awesome_flutter: ^9.2.0
 
 dev_dependencies:
   flutter_test:
