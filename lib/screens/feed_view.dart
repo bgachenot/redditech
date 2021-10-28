@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:redditech/screens/best_posts.dart';
-import 'package:redditech/screens/new_posts.dart';
-import 'package:redditech/screens/top_posts.dart';
+import 'package:redditech/screens/display_posts.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FeedView extends StatefulWidget {
   const FeedView({Key? key}) : super(key: key);
@@ -10,83 +9,77 @@ class FeedView extends StatefulWidget {
   _FeedViewState createState() => _FeedViewState();
 }
 
-class _FeedViewState extends State<FeedView> {
-  bool _best = false;
-  bool _top = true;
+class _FeedViewState extends State<FeedView>
+    with SingleTickerProviderStateMixin {
+  final String _appBarTitle = "Top posts for you";
+  static const List<Tab> _myTabs = <Tab>[
+    Tab(
+      child: Text(
+        'Best',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
+    ),
+    Tab(
+      child: Text(
+        'Top',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
+    ),
+    Tab(
+      child: Text(
+        'New',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
+    ),
+    Tab(
+      child: Text(
+        'Random',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
+    ),
+  ];
+  static const List<String> _myEndpoints = [
+    "best",
+    "top",
+    "new",
+    "random",
+  ];
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: _myTabs.length);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_best ? 'Best posts for you' : _top ? 'Top posts for you' : 'New posts for you'),
+        title: Text(_appBarTitle),
         centerTitle: true,
+        bottom: TabBar(
+          onTap: (index) {
+            setState(() {
+              _tabController.index = index;
+            });
+          },
+          controller: _tabController,
+          tabs: _myTabs,
+        ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Theme.of(context).hintColor),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Card(
-                  child: InkWell(
-                    splashColor: Colors.blue.withAlpha(30),
-                    onTap: () {
-                      _best = true;
-                      _top = false;
-                      setState(() {});
-                    },
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.30,
-                      height: MediaQuery.of(context).size.width * 0.15,
-                      child: const Text('Best'),
-                    ),
-                  ),
-                ),
-                Card(
-                  child: InkWell(
-                    splashColor: Colors.blue.withAlpha(30),
-                    onTap: () {
-                      _best = false;
-                      _top = true;
-                      setState(() {});
-                    },
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.30,
-                      height: MediaQuery.of(context).size.width * 0.15,
-                      child: const Text('Top'),
-                    ),
-                  ),
-                ),
-                Card(
-                  child: InkWell(
-                    splashColor: Colors.blue.withAlpha(30),
-                    onTap: () {
-                      _best = false;
-                      _top = false;
-                      setState(() {});
-                    },
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.30,
-                      height: MediaQuery.of(context).size.width * 0.15,
-                      child: const Text('New'),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height - 230,
-            child: (_best) ? BestPostsView() : (_top) ? TopPostsView() : NewPostsView(),
-          )
-        ],
+      body: TabBarView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _tabController,
+        children: _myTabs.map((Tab tab) {
+          return DisplayPosts(endpoint: _myEndpoints[_tabController.index]);
+        }).toList(),
       ),
     );
   }
