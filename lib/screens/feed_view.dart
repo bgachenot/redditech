@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:redditech/screens/best_posts.dart';
+import 'package:redditech/screens/new_posts.dart';
+import 'package:redditech/screens/top_posts.dart';
 
 class FeedView extends StatefulWidget {
   const FeedView({Key? key}) : super(key: key);
@@ -10,14 +12,13 @@ class FeedView extends StatefulWidget {
 
 class _FeedViewState extends State<FeedView> {
   bool _best = false;
-  bool _popular = true;
-  bool _new = false;
+  bool _top = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_best ? 'Best posts for you' : _popular ? 'Popular posts for you' : 'New posts for you'),
+        title: Text(_best ? 'Best posts for you' : _top ? 'Popular posts for you' : 'New posts for you'),
         centerTitle: true,
       ),
       body: Column(
@@ -38,8 +39,7 @@ class _FeedViewState extends State<FeedView> {
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () {
                       _best = true;
-                      _popular = false;
-                      _new = false;
+                      _top = false;
                       setState(() {});
                     },
                     child: SizedBox(
@@ -54,14 +54,13 @@ class _FeedViewState extends State<FeedView> {
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () {
                       _best = false;
-                      _popular = true;
-                      _new = false;
+                      _top = true;
                       setState(() {});
                     },
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.30,
                       height: MediaQuery.of(context).size.width * 0.15,
-                      child: const Text('Popular'),
+                      child: const Text('Top'),
                     ),
                   ),
                 ),
@@ -70,8 +69,7 @@ class _FeedViewState extends State<FeedView> {
                     splashColor: Colors.blue.withAlpha(30),
                     onTap: () {
                       _best = false;
-                      _popular = false;
-                      _new = true;
+                      _top = false;
                       setState(() {});
                     },
                     child: SizedBox(
@@ -86,7 +84,7 @@ class _FeedViewState extends State<FeedView> {
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height - 230,
-            child: (_best) ? BestPostsView() : (_popular) ? SizedBox.shrink() : SizedBox.shrink(),
+            child: (_best) ? BestPostsView() : (_top) ? TopPostsView() : NewPostsView(),
           )
         ],
       ),
