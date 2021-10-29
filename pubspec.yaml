@@ -40,6 +40,10 @@ dependencies:
   outline_search_bar: ^2.2.0
   no_internet_check: ^0.0.4
   font_awesome_flutter: ^9.2.0
+  video_player: ^2.2.6
+  chewie: ^1.2.2
+  chewie_audio: ^1.2.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
