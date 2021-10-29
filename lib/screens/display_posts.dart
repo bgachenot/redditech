@@ -62,32 +62,28 @@ class _DisplayPostsState extends State<DisplayPosts> {
                 },
                 child: Column(
                   children: <Widget>[
-                    ListTile(
-                      leading: Image.network(_posts
-                              .elementAt(index)
-                              .subReddit
-                              .community_icon_url ??
-                          _posts.elementAt(index).subReddit.icon_img),
-                      title: Text(_posts
-                          .elementAt(index)
-                          .subReddit
-                          .display_name_prefixed),
-                      subtitle: Text('u/' + _posts.elementAt(index).author),
-                      trailing: Icon(Icons.arrow_forward),
-                      onTap: () async {
-                        Navigator.pushNamed(context, '/subreddit',
-                            arguments: {
-                              'subreddit': _posts.elementAt(index).subReddit
-                            });
-                        print(_posts.elementAt(index));
-                      },
-                    ),
+                      ListTile(
+                        leading: Image.network(_posts
+                                .elementAt(index)
+                                .subReddit
+                                .community_icon_url ??
+                            _posts.elementAt(index).subReddit.icon_img!),
+                        title: Text(_posts
+                            .elementAt(index)
+                            .subReddit
+                            .display_name_prefixed),
+                        subtitle: Text('u/' + _posts.elementAt(index).author),
+                        trailing: Icon(Icons.arrow_forward),
+                        onTap: () async {
+                          Navigator.pushNamed(context, '/subreddit',
+                              arguments: {
+                                'subreddit': _posts.elementAt(index).subReddit
+                              });
+                        },
+                      ),
                     if (_posts.elementAt(index).is_video)
                       VideoWidget(
-                          url: _posts
-                              .elementAt(index)
-                              .media!
-                              .reddit_video_url!,
+                          url: _posts.elementAt(index).media!.reddit_video_url!,
                           play: true),
                     if (_posts.elementAt(index).post_hint != null &&
                         _posts.elementAt(index).post_hint == 'image')

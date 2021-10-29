@@ -1,7 +1,7 @@
 class SubReddit {
   final String title;
   final int subscribers;
-  final String icon_img;
+  final String? icon_img;
   final String display_name_prefixed;
   final String? community_icon_url;
   final String banner_background_image_url;

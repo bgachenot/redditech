@@ -259,9 +259,9 @@ class NetworkHelper {
     SubReddit _subreddit = SubReddit(
       title: resp['data']['title'],
       subscribers: resp['data']['subscribers'],
-      icon_img: resp['data']['icon_img'],
+      icon_img: (resp['data']['icon_img'] == '') ? null : resp['data']['icon_img'],
       display_name_prefixed: resp['data']['display_name_prefixed'],
-      community_icon_url: resp['data']['community_icon'],
+      community_icon_url: (resp['data']['community_icon'] == '') ? null : resp['data']['community_icon'],
       banner_background_image_url: resp['data']['banner_background_image'],
       description_html: resp['data']['description_html'],
       created: resp['data']['created'],
