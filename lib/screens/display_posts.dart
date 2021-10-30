@@ -45,7 +45,9 @@ class _DisplayPostsState extends State<DisplayPosts> {
       return Column(
         children: [
           Text(_posts.elementAt(index).selftext, maxLines: 10),
-          Text('[...]', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Padding(padding: EdgeInsets.all(8)),
+          Text('Read more...',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         ],
       );
     } else {
@@ -76,11 +78,9 @@ class _DisplayPostsState extends State<DisplayPosts> {
                 child: Column(
                   children: <Widget>[
                     ListTile(
-                      leading: Image.network(_posts
-                              .elementAt(index)
-                              .subReddit
-                              .community_icon ??
-                          _posts.elementAt(index).subReddit.icon_img!),
+                      leading: Image.network(
+                          _posts.elementAt(index).subReddit.community_icon ??
+                              _posts.elementAt(index).subReddit.icon_img!),
                       title: Text(_posts
                           .elementAt(index)
                           .subReddit
@@ -118,6 +118,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
                         ],
                       ),
                     _displayText(index),
+                    Padding(padding: EdgeInsets.all(5)),
                     ListTile(
                       title: Row(
                         children: [
