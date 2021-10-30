@@ -65,3 +65,14 @@ String prettyNumber(int number) {
   }
   return result;
 }
+
+String difference(double time, bool days, bool hours) {
+  DateTime _accountCreatedSince = DateTime.fromMillisecondsSinceEpoch((time * 1000).toInt(), isUtc: true);
+  if (days) {
+    return DateTime.now().difference(_accountCreatedSince).inDays.toString();
+  }
+  if (hours) {
+    return DateTime.now().difference(_accountCreatedSince).inHours.toString();
+  }
+  return "";
+}
