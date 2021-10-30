@@ -57,9 +57,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/subreddit', arguments: {
-                    'subreddit': _posts.elementAt(index).subReddit
-                  });
+                  Navigator.pushNamed(context, '/post', arguments: {'post': _posts.elementAt(index)});
                 },
                 child: Column(
                   children: <Widget>[
@@ -128,12 +126,6 @@ class _DisplayPostsState extends State<DisplayPosts> {
                         ],
                       ),
                     ),
-                    // ListTile(
-                    //   trailing: (_posts.elementAt(index).preview == null)
-                    //       ? SizedBox.shrink()
-                    //       : Image.network(''),
-                    //   title: Text(_posts.elementAt(index).title),
-                    // ),
                   ],
                 ),
               ),
