@@ -86,7 +86,7 @@ class NetworkHelper {
       'response_type': 'code',
       'state': _randomString,
       'redirect_uri': _redirectURI + _callbackScheme,
-      'scope': 'identity read',
+      'scope': 'identity read mysubreddits subscribe',
     });
     try {
       final _authenticateResult = await FlutterWebAuth.authenticate(
@@ -135,6 +135,34 @@ class NetworkHelper {
       //TODO: Handle multi lines in order to display the error message to the end user.
     }
     return false;
+  }
+
+  Future<bool> subRedditSubscription(
+      String subreddit_thing_name, bool sub) async {
+    String _token = (await _getAccessToken())!;
+    var response = await http.post(
+      Uri.parse('https://oauth.reddit.com/api/subscribe'),
+      headers: {
+        'Authorization': 'Bearer ' + _token,
+        "Content-Type": "application/x-www-form-urlencoded",
+        'User-Agent':
+            'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+      },
+      body: {
+        'action': 'sub',//sub ? 'sub' : 'unsub',
+        'sr': subreddit_thing_name,
+      },
+    );
+    if (response.statusCode == 401) {
+      throw ExceptionLoginInvalid();
+    }
+    if (response.statusCode == 200) {
+      return sub;
+    } else if (response.statusCode == 404 && sub == false) {
+      return sub;
+    } else {
+      return !sub;
+    }
   }
 
   Future<List<Trophies>> fetchUserTrophies() async {
@@ -245,10 +273,12 @@ class NetworkHelper {
   }
 
   Future<SubReddit> fetchSubredditData(subreddit_name) async {
+    String _token = (await _getAccessToken())!;
     var response = await http.get(
         Uri.parse(
-            'https://www.reddit.com/r/$subreddit_name/about.json?raw_json=1'),
+            'https://oauth.reddit.com/r/$subreddit_name/about?raw_json=1'),
         headers: {
+          'authorization': 'bearer ' + _token,
           'User-Agent':
               'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
         });
@@ -257,21 +287,41 @@ class NetworkHelper {
     }
     Map<String, dynamic> resp = jsonDecode(response.body);
     SubReddit _subreddit = SubReddit(
+      display_name: resp['data']['display_name'],
       title: resp['data']['title'],
-      subscribers: resp['data']['subscribers'],
-      icon_img:
-          (resp['data']['icon_img'] == '') ? null : resp['data']['icon_img'],
+      active_user_count: resp['data']['active_user_count'],
+      icon_img: ((resp['data']['icon_img'] != null &&
+                  (resp['data']['icon_img'] == '')) ||
+              resp['data']['icon_img'] == null)
+          ? null
+          : resp['data']['icon_img'],
       display_name_prefixed: resp['data']['display_name_prefixed'],
-      community_icon_url: (resp['data']['community_icon'] == '')
+      accounts_active: resp['data']['accounts_active'],
+      subscribers: resp['data']['subscribers'],
+      name: resp['data']['name'],
+      public_description: resp['data']['public_description'],
+      user_has_favorited: resp['data']['user_has_favorited'],
+      community_icon: ((resp['data']['community_icon'] != null &&
+                  (resp['data']['community_icon'] == '')) ||
+              resp['data']['community_icon'] == null)
           ? null
           : resp['data']['community_icon'],
-      banner_background_image_url: resp['data']['banner_background_image'],
+      banner_background_image: resp['data']['banner_background_image'],
       description_html: resp['data']['description_html'],
       created: resp['data']['created'],
-      banner_background_color: resp['data']['banner_background_color'],
+      user_is_subscriber: resp['data']['user_is_subscriber'],
+      public_description_html: resp['data']['public_description_html'],
+      accept_followers: resp['data']['accept_followers'],
+      banner_img: ((resp['data']['banner_img'] != null &&
+                  (resp['data']['banner_img'] == '')) ||
+              resp['data']['banner_img'] == null)
+          ? null
+          : resp['data']['banner_img'],
+      description: resp['data']['description'],
+      url: resp['data']['url'],
       mobile_banner_image: resp['data']['mobile_banner_image'],
-      public_description: resp['data']['public_description'],
     );
+    print(_subreddit);
     return _subreddit;
   }
 

@@ -28,7 +28,7 @@ class _DisplayPostState extends State<DisplayPost> {
           ListTile(
             leading: Image.network(_post
                 .subReddit
-                .community_icon_url ??
+                .community_icon ??
                 _post.subReddit.icon_img!),
             title: Text(_post
                 .subReddit
