@@ -123,6 +123,12 @@ class _DisplayPostsState extends State<DisplayPosts> {
                           const Padding(
                               padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
                           Text(prettyNumber(_posts.elementAt(index).downs)),
+                          const Padding(
+                              padding: EdgeInsets.fromLTRB(16, 0, 0, 0)),
+                          const FaIcon(FontAwesomeIcons.hourglass),
+                          const Padding(
+                              padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
+                          Text(difference(_posts.elementAt(index).created, false, true) + ' hours'),
                         ],
                       ),
                     ),
