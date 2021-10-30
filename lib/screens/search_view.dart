@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:outline_search_bar/outline_search_bar.dart';
 import 'package:redditech/helpers/network.dart';
 import 'package:redditech/helpers/utils.dart';
 import 'package:redditech/model/subreddit.dart';
 import 'package:redditech/model/subreddit_search.dart';
+import 'package:redditech/widgets/Subreddit_icon.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({Key? key}) : super(key: key);
@@ -35,19 +37,17 @@ class _SearchViewState extends State<SearchView> {
       ),
       body: Column(
         children: [
-          Container(
-            child: OutlineSearchBar(
-              hintText: 'Superstonk',
-              maxLength: 21,
-              onTypingFinished: (query) {
-                getSubreddits(query);
-              },
-              onClearButtonPressed: (query) {
-                setState(() {
-                  _subReddits = [];
-                });
-              },
-            ),
+          OutlineSearchBar(
+            hintText: 'Superstonk',
+            maxLength: 21,
+            onTypingFinished: (query) {
+              getSubreddits(query);
+            },
+            onClearButtonPressed: (query) {
+              setState(() {
+                _subReddits = [];
+              });
+            },
           ),
           Expanded(
             child: ListView.builder(
@@ -55,13 +55,9 @@ class _SearchViewState extends State<SearchView> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    leading: (_subReddits.elementAt(index).icon_img != '')
-                        ? Image.network(_subReddits.elementAt(index).icon_img!)
-                        : SizedBox.shrink(),
+                    leading: iconWidget(_subReddits.elementAt(index).community_icon, _subReddits.elementAt(index).icon_img),
                     title: Text(_subReddits.elementAt(index).name),
-                    // subtitle:
-                    // Text('u/' + _posts.elementAt(index).author),
-                    trailing: Icon(Icons.arrow_forward),
+                    trailing: const Icon(Icons.arrow_forward),
                     onTap: () async {
                       SubReddit _subreddit =
                           await _networkHelper.fetchSubredditData(

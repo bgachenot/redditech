@@ -75,8 +75,9 @@ class _SubRedditViewState extends State<SubRedditView> {
         children: [
           Stack(
             children: [
-              if (_subreddit.mobile_banner_image != '')
-                Image.network(_subreddit.mobile_banner_image),
+              if (_subreddit.mobile_banner_image != null &&
+                  _subreddit.mobile_banner_image != '')
+                Image.network(_subreddit.mobile_banner_image!),
               Align(
                 alignment: Alignment.bottomLeft,
                 child: CircleAvatar(
@@ -88,7 +89,8 @@ class _SubRedditViewState extends State<SubRedditView> {
           ),
           Text(_subreddit.title),
           Text(_subreddit.subscribers.toString() + ' members'),
-          Text(_subreddit.public_description),
+          if (_subreddit.public_description != null)
+            Text(_subreddit.public_description!),
         ],
       ),
     );

@@ -7,19 +7,19 @@ class SubReddit {
   final int accounts_active;
   final int subscribers;
   final String name;
-  final String public_description;
+  final String? public_description;
   final bool user_has_favorited;
   final String? community_icon;
   final String? banner_background_image;
-  final String description_html;
+  final String? description_html;
   final double created;
   bool user_is_subscriber;
   final String? public_description_html;
   final bool accept_followers;
   final String? banner_img; // Can be '' or null
-  final String description;
+  final String? description;
   final String url;
-  final String mobile_banner_image;
+  final String? mobile_banner_image;
 
   SubReddit({
     required this.display_name,
