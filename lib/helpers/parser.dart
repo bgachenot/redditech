@@ -18,8 +18,30 @@ Map<String, dynamic> parseRedditAuthorizationResponse(
   return jsonDecode(_redditRawJsonResponse);
 }
 
-List<AllAwardings>? parseAllAwardings(jsonData) {
-  return null;
+List<AllAwardings>? parseAllAwardings(List<dynamic> jsonData) {
+  List<AllAwardings> _allAwardings = [];
+  if (jsonData.isEmpty) {
+    return null;
+  } else {
+    for (int i = 0; i != jsonData.length; i++) {
+      AllAwardings _awarding = AllAwardings(
+        coin_price: jsonData[i]['coin_price'],
+        id: jsonData[i]['id'],
+        coin_reward: jsonData[i]['coin_reward'],
+        icon_url: jsonData[i]['icon_url'],
+        icon_width: jsonData[i]['icon_width'],
+        static_icon_width: jsonData[i]['static_icon_width'],
+        description: jsonData[i]['description'],
+        count: jsonData[i]['count'],
+        name: jsonData[i]['name'],
+        icon_format: jsonData[i]['icon_format'],
+        icon_height: jsonData[i]['icon_height'],
+        static_icon_url: jsonData[i]['static_icon_url'],
+      );
+      _allAwardings.add(_awarding);
+    }
+    return _allAwardings;
+  }
 }
 
 Preview? parsePreview(Map<String, dynamic> jsonData) {
