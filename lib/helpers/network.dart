@@ -230,11 +230,7 @@ class NetworkHelper {
       throw ExceptionLoginInvalid();
     }
     Map<String, dynamic> resp = jsonDecode(response.body);
-    if (resp['data']['community_icon'] == null ||
-        resp['data']['community_icon'] == '') {
-      return null;
-    }
-    return resp['data']['community_icon'];
+    return parseredditStrings(resp['data']['community_icon']);
   }
 
   Future<List<SubRedditSearch>> fetchSubreddits(String query) async {
@@ -262,9 +258,7 @@ class NetworkHelper {
     for (var element in resp['subreddits']) {
       SubRedditSearch _subreddit = SubRedditSearch(
           active_user_count: element['active_user_count'],
-          icon_img: (element['icon_img'] == '' || element['icon_img'] == null)
-              ? null
-              : element['icon_img'],
+          icon_img: parseredditStrings(element['icon_img']),
           community_icon: await getCommunityIcon(element['name']),
           name: element['name'],
           subscriber_count: element['subscriber_count']);
@@ -291,33 +285,21 @@ class NetworkHelper {
       display_name: resp['data']['display_name'],
       title: resp['data']['title'],
       active_user_count: resp['data']['active_user_count'],
-      icon_img: ((resp['data']['icon_img'] != null &&
-                  (resp['data']['icon_img'] == '')) ||
-              resp['data']['icon_img'] == null)
-          ? null
-          : resp['data']['icon_img'],
+      icon_img: parseredditStrings(resp['data']['icon_img']),
       display_name_prefixed: resp['data']['display_name_prefixed'],
       accounts_active: resp['data']['accounts_active'],
       subscribers: resp['data']['subscribers'],
       name: resp['data']['name'],
       public_description: resp['data']['public_description'],
       user_has_favorited: resp['data']['user_has_favorited'],
-      community_icon: ((resp['data']['community_icon'] != null &&
-                  (resp['data']['community_icon'] == '')) ||
-              resp['data']['community_icon'] == null)
-          ? null
-          : resp['data']['community_icon'],
+      community_icon: parseredditStrings(resp['data']['community_icon']),
       banner_background_image: resp['data']['banner_background_image'],
       description_html: resp['data']['description_html'],
       created: resp['data']['created'],
       user_is_subscriber: resp['data']['user_is_subscriber'],
       public_description_html: resp['data']['public_description_html'],
       accept_followers: resp['data']['accept_followers'],
-      banner_img: ((resp['data']['banner_img'] != null &&
-                  (resp['data']['banner_img'] == '')) ||
-              resp['data']['banner_img'] == null)
-          ? null
-          : resp['data']['banner_img'],
+      banner_img: parseredditStrings(resp['data']['banner_img']),
       description: resp['data']['description'],
       url: resp['data']['url'],
       mobile_banner_image: resp['data']['mobile_banner_image'],
@@ -354,16 +336,12 @@ class NetworkHelper {
         title: element['data']['title'],
         subreddit_name_prefixed: element['data']['subreddit_name_prefixed'],
         downs: element['data']['downs'],
-        thumbnail_height: (element['data']['thumbnail_height'] == null)
-            ? 0
-            : element['data']['thumbnail_height'],
+        thumbnail_height: parseredditInts(element['data']['thumbnail_height']),
         name: element['data']['name'],
         upvote_ratio: element['data']['upvote_ratio'],
         ups: element['data']['ups'],
         total_awards_received: element['data']['total_awards_received'],
-        thumbnail_width: (element['data']['thumbnail_width'] == null)
-            ? 0
-            : element['data']['thumbnail_width'],
+        thumbnail_width: parseredditInts(element['data']['thumbnail_width']),
         score: element['data']['score'],
         thumbnail: element['data']['thumbnail'],
         post_hint:

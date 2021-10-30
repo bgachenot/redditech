@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:redditech/helpers/network.dart';
 import 'package:redditech/helpers/utils.dart';
 import 'package:redditech/model/posts.dart';
+import 'package:redditech/widgets/Subreddit_icon.dart';
 import 'package:redditech/widgets/loading_data.dart';
 import 'package:redditech/widgets/video_widget.dart';
 import 'package:video_player/video_player.dart';
@@ -78,9 +79,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
                 child: Column(
                   children: <Widget>[
                     ListTile(
-                      leading: Image.network(
-                          _posts.elementAt(index).subReddit.community_icon ??
-                              _posts.elementAt(index).subReddit.icon_img!),
+                      leading: iconWidget(_posts.elementAt(index).subReddit.community_icon, _posts.elementAt(index).subReddit.icon_img),
                       title: Text(_posts
                           .elementAt(index)
                           .subReddit

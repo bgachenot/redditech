@@ -75,3 +75,17 @@ Media? parseMedia(Map<String, dynamic> jsonData) {
     return null;
   }
 }
+
+String? parseredditStrings(String? str) {
+  if (str == null || str == '') {
+    return null;
+  }
+  return str;
+}
+
+int parseredditInts(int? number) {
+  if (number == null) {
+    return 0;
+  }
+  return number;
+}
