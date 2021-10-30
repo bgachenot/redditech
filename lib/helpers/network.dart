@@ -149,7 +149,7 @@ class NetworkHelper {
             'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
       },
       body: {
-        'action': 'sub',//sub ? 'sub' : 'unsub',
+        'action': sub ? 'sub' : 'unsub',
         'sr': subreddit_thing_name,
       },
     );
@@ -219,23 +219,22 @@ class NetworkHelper {
     return user;
   }
 
-  Future<String> getSubRedditIcon(String subRedditName) async {
+  Future<String?> getCommunityIcon(String name) async {
     var response = await http.get(
-      Uri.parse(
-          'https://www.reddit.com/r/$subRedditName/about.json?raw_json=1'),
-      headers: {
-        'User-Agent':
-            'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
-      },
-    );
+        Uri.parse('https://www.reddit.com/r/$name/about.json?raw_json=1'),
+        headers: {
+          'User-Agent':
+              'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+        });
+    if (response.statusCode == 401) {
+      throw ExceptionLoginInvalid();
+    }
     Map<String, dynamic> resp = jsonDecode(response.body);
-    if (resp['data']['community_icon'] != '') {
-      return resp['data']['community_icon'];
+    if (resp['data']['community_icon'] == null ||
+        resp['data']['community_icon'] == '') {
+      return null;
     }
-    if (resp['data']['icon_img'] != '') {
-      return resp['data']['icon_img'];
-    }
-    return '';
+    return resp['data']['community_icon'];
   }
 
   Future<List<SubRedditSearch>> fetchSubreddits(String query) async {
@@ -261,10 +260,12 @@ class NetworkHelper {
     Map<String, dynamic> resp = jsonDecode(response.body);
 
     for (var element in resp['subreddits']) {
-      String _iconImg = await getSubRedditIcon(element['name']);
       SubRedditSearch _subreddit = SubRedditSearch(
           active_user_count: element['active_user_count'],
-          icon_img: _iconImg,
+          icon_img: (element['icon_img'] == '' || element['icon_img'] == null)
+              ? null
+              : element['icon_img'],
+          community_icon: await getCommunityIcon(element['name']),
           name: element['name'],
           subscriber_count: element['subscriber_count']);
       _subreddits.add(_subreddit);
