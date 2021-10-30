@@ -7,6 +7,7 @@ import 'package:redditech/screens/loading_view.dart';
 import "package:redditech/screens/main_view.dart";
 import 'package:redditech/screens/reddit_login_view.dart';
 import 'package:redditech/screens/subreddit_view.dart';
+import 'package:redditech/screens/trophies_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,7 @@ void main() {
       '/main': (context) => const MainView(),
       '/subreddit': (context) => const SubRedditView(),
       '/post': (context) => const DisplayPost(),
+      '/trophies': (context) => const TrophiesView(),
     },
   ));
 }
