@@ -16,18 +16,48 @@ String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
 String prettyNumber(int number) {
   String result = number.toString();
   if (number >= 1000) {
+    number = number ~/ 100;
+    var formatter = intl.NumberFormat('##0,0k');
+    result = formatter.format(number);
+    return result;
+  }
+  if (number >= 10000) {
     number = number ~/ 1000;
     var formatter = intl.NumberFormat('##0,0k');
     result = formatter.format(number);
     return result;
   }
+  if (number >= 100000) {
+    number = number ~/ 10000;
+    var formatter = intl.NumberFormat('##0,0k');
+    result = formatter.format(number);
+    return result;
+  }
   if (number >= 1000000) {
+    number = number ~/ 100000;
+    var formatter = intl.NumberFormat('##0,0m');
+    result = formatter.format(number);
+    return result;
+  }
+  if (number >= 10000000) {
     number = number ~/ 1000000;
     var formatter = intl.NumberFormat('##0,0m');
     result = formatter.format(number);
     return result;
   }
+  if (number >= 100000000) {
+    number = number ~/ 10000000;
+    var formatter = intl.NumberFormat('##0,0m');
+    result = formatter.format(number);
+    return result;
+  }
   if (number >= 1000000000) {
+    number = number ~/ 100000000;
+    var formatter = intl.NumberFormat('##0,0m');
+    result = formatter.format(number);
+    return result;
+  }
+  if (number >= 10000000000) {
     number = number ~/ 1000000000;
     var formatter = intl.NumberFormat('##0,0M');
     result = formatter.format(number);
