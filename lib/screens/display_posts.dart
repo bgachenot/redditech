@@ -40,6 +40,19 @@ class _DisplayPostsState extends State<DisplayPosts> {
     initPosts();
   }
 
+  Widget _displayText(index) {
+    if (_posts.elementAt(index).selftext.length > 300) {
+      return Column(
+        children: [
+          Text(_posts.elementAt(index).selftext, maxLines: 10),
+          Text('[...]', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        ],
+      );
+    } else {
+      return Text(_posts.elementAt(index).selftext);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_initFinished == false) {
@@ -57,7 +70,8 @@ class _DisplayPostsState extends State<DisplayPosts> {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/post', arguments: {'post': _posts.elementAt(index)});
+                  Navigator.pushNamed(context, '/post',
+                      arguments: {'post': _posts.elementAt(index)});
                 },
                 child: Column(
                   children: <Widget>[
@@ -65,7 +79,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
                       leading: Image.network(_posts
                               .elementAt(index)
                               .subReddit
-                              .community_icon_url ??
+                              .community_icon ??
                           _posts.elementAt(index).subReddit.icon_img!),
                       title: Text(_posts
                           .elementAt(index)
@@ -103,6 +117,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
                           ),
                         ],
                       ),
+                    _displayText(index),
                     ListTile(
                       title: Row(
                         children: [
@@ -128,7 +143,9 @@ class _DisplayPostsState extends State<DisplayPosts> {
                           const FaIcon(FontAwesomeIcons.hourglass),
                           const Padding(
                               padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
-                          Text(difference(_posts.elementAt(index).created, false, true) + ' hours'),
+                          Text(difference(_posts.elementAt(index).created,
+                                  false, true) +
+                              ' hours'),
                         ],
                       ),
                     ),
