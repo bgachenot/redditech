@@ -74,14 +74,22 @@ class _DisplayPostsState extends State<DisplayPosts> {
                           .subReddit
                           .display_name_prefixed),
                       subtitle: Text('u/' + _posts.elementAt(index).author),
-                      trailing: Icon(Icons.arrow_forward),
+                      trailing: const Icon(Icons.arrow_forward),
                       onTap: () async {
                         Navigator.pushNamed(context, '/subreddit', arguments: {
                           'subreddit': _posts.elementAt(index).subReddit
                         });
                       },
                     ),
-                    if (_posts.elementAt(index).is_video && _posts.elementAt(index).media!.reddit_video)
+                    if (_posts.elementAt(index).all_awardings != null)
+                      ListTile(
+                        tileColor: Colors.grey[300],
+                        leading: const Text('Show rewards'),
+                        trailing: const Icon(Icons.arrow_forward),
+                        onTap: () {},
+                      ),
+                    if (_posts.elementAt(index).is_video &&
+                        _posts.elementAt(index).media!.reddit_video)
                       VideoWidget(
                         url: _posts.elementAt(index).media!.reddit_video_url!,
                         play: true,
@@ -102,25 +110,20 @@ class _DisplayPostsState extends State<DisplayPosts> {
                         children: [
                           const FaIcon(FontAwesomeIcons.commentAlt),
                           const Padding(
-                            padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                          ),
+                              padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
                           Text(prettyNumber(
                               _posts.elementAt(index).num_comments)),
                           const Padding(
-                            padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                          ),
+                              padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
                           const FaIcon(FontAwesomeIcons.arrowAltCircleUp),
                           const Padding(
-                            padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                          ),
+                              padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
                           Text(prettyNumber(_posts.elementAt(index).ups)),
                           const Padding(
-                            padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                          ),
+                              padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
                           const FaIcon(FontAwesomeIcons.arrowAltCircleDown),
                           const Padding(
-                            padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                          ),
+                              padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
                           Text(prettyNumber(_posts.elementAt(index).downs)),
                         ],
                       ),
