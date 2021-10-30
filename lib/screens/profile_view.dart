@@ -60,7 +60,6 @@ class _ProfileViewState extends State<ProfileView> {
             children: [
               SizedBox(
                 width: double.infinity,
-                height: MediaQuery.of(context).size.height - 310,
                 child: Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
