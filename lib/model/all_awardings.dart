@@ -8,7 +8,7 @@ class AllAwardings {
   final String description;
   final int count;
   final String name;
-  final String icon_format; // useless
+  final String? icon_format; // useless
   final int icon_height;
   final String static_icon_url;
 
