@@ -33,28 +33,25 @@ class _RedditLoginViewState extends State<RedditLoginView> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
-          "Please login to Reddit",
-          style: TextStyle(color: Colors.black),
+          "Login to Reddit",
         ),
         centerTitle: true,
       ),
-      body: Column(children: [
-        const SizedBox(height: 250),
-        Center(
-          child: Text(
-            _errorMsg,
-            style: const TextStyle(color: Colors.red, fontSize: 18),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: _login,
+            child: Image.asset('assets/images/login_button.png'),
           ),
-        ),
-        Center(
-          child: ElevatedButton(
-            onPressed: _login,
-            child: const Text("Login"),
-          ),
-        ),
-      ]),
+          if (_errorMsg != '')
+            Text(
+              _errorMsg,
+              style: const TextStyle(color: Colors.red, fontSize: 18),
+            ),
+        ],
+      ),
     );
   }
 }
