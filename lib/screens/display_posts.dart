@@ -36,10 +36,16 @@ class _DisplayPostsState extends State<DisplayPosts> {
 
   Future<void> loadMorePosts() async {
     try {
-      _isLoadingMore = true;
-      _posts.addAll(await _networkHelper.fetchMoreUserPosts(
-          widget.endpoint, _posts.elementAt(_posts.length - 1).subreddit_id));
-      _isLoadingMore = false;
+      if (widget.endpoint == 'random') {
+        initPosts();
+        _scrollController.animateTo(0,
+            duration: const Duration(seconds: 3), curve: Curves.linear);
+      } else {
+        _isLoadingMore = true;
+        _posts.addAll(await _networkHelper.fetchMoreUserPosts(
+            widget.endpoint, _posts.elementAt(_posts.length - 1).name));
+        _isLoadingMore = false;
+      }
     } on ExceptionLoginInvalid {
       Navigator.pushReplacementNamed(context, '/login',
           arguments: {'error': 'Authentication expired.'});

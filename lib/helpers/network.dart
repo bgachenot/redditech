@@ -300,6 +300,7 @@ class NetworkHelper {
             id: element['data']['id']);
         _subreddits.add(_subreddit);
       }
+      _subreddits.elementAt(_subreddits.length - 1).name = resp['data']['after'];
     }
     return _subreddits;
   }
@@ -335,6 +336,7 @@ class NetworkHelper {
             id: element['data']['id']);
         _subreddits.add(_subreddit);
       }
+      _subreddits.elementAt(_subreddits.length - 1).name = resp['data']['after'];
     }
     return _subreddits;
   }
@@ -433,6 +435,7 @@ class NetworkHelper {
       );
       _posts.add(_post);
     }
+    _posts.elementAt(_posts.length - 1).name = resp['data']['after'];
     return _posts;
   }
 
@@ -491,6 +494,7 @@ class NetworkHelper {
       );
       _posts.add(_post);
     }
+    _posts.elementAt(_posts.length - 1).name = resp['data']['after'];
     return _posts;
   }
 }

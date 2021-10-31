@@ -3,7 +3,7 @@ class SubRedditSearch {
   final String? icon_img;
   final String display_name_prefixed;
   final int subscribers;
-  final String name;
+  String name;
   final String? public_description;
   final String? community_icon;
   final String id;

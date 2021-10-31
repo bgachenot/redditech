@@ -11,7 +11,7 @@ class Posts {
   final String subreddit_name_prefixed;
   final int downs;
   final int thumbnail_height; // can be null
-  final String name; // t3_ object (is used for next)
+  String name; // t3_ object (is used for next)
   final double upvote_ratio;
   final int ups;
   final int total_awards_received;
