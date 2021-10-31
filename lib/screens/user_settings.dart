@@ -56,8 +56,10 @@ class _UserSettingsViewState extends State<UserSettingsView> {
             try {
               if (await _networkHelper.patchUserPrefs(keyName, state) != true) {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/userSettings', ModalRoute.withName('/main'),
-                    arguments: {'error': 'Something unexpected happened...\nCould not change your settings.'});
+                    '/userSettings', ModalRoute.withName('/main'), arguments: {
+                  'error':
+                      'Something unexpected happened...\nCould not change your settings.'
+                });
               }
               _errorMsg = null;
               print(_errorMsg);
@@ -92,8 +94,6 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     if (_initFinished == false) {
       return const LoadingDataScreen();
     } else {
-      print('Building...');
-      print(_errorMsg);
       return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -106,9 +106,6 @@ class _UserSettingsViewState extends State<UserSettingsView> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              // _createChoise('Who can send you private messages', 'accept_pms',
-              //     _userPreferencies.accept_pms),
-              // const SizedBox(height: 10),
               _createChoise('Allow people to follow you', 'enable_followers',
                   _userPreferencies.enable_followers),
               const SizedBox(height: 10),
@@ -139,10 +136,15 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                   'Personalize recommendations based on your activity with our partners',
                   'third_party_site_data_personalized_content',
                   _userPreferencies.third_party_site_data_personalized_content),
-              (_errorMsg != null) ? Padding(
-                padding: const EdgeInsets.all(40.0),
-                child: Text(_errorMsg!, style: const TextStyle(fontSize: 20, color: Colors.red),),
-              ) : const SizedBox.shrink(),
+              (_errorMsg != null)
+                  ? Padding(
+                      padding: const EdgeInsets.all(40.0),
+                      child: Text(
+                        _errorMsg!,
+                        style: const TextStyle(fontSize: 20, color: Colors.red),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ],
           ),
         ),
