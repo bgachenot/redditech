@@ -1,0 +1,40 @@
+TEST POLICY
+
+Debug testing:
+
+Profile Section:
+- Go to profile, go back to feed, and do it multiple times quickly
+- Go to profile, go to settings, spam all buttons, go back and do it again
+- Go to profile, click the button to display trophies and do it multiple times
+
+Feed Section:
+- Navigate through Best, Top, New, Random quickly and do it multiple times
+- Check if posts are well displayed
+- Check if posts have no text bug
+- Pull to refresh the tab, pull again while it?s refreshing.
+- When low/bad wifi, try to scroll fast.
+- Check if videos are well loaded and played
+
+SubReddit Section:
+- From the Feed Section, click on a card which displays a subreddit and click on it.
+- Follow, unfollow, multiple times, leave the card having unsubscribed the SubReddit, then go back again and check that the button is still "follow", click on it to get the follow back
+
+Search Section: 
+- Search multiple SubReddits, follow them and check if feed displays them.
+- Search with special characters and see if it works.
+- Search a SubReddit and click multiple time the magnifying glass icon
+- search for a SubReddit and click it, then delete this Sub
+
+Login Section
+- When you hit login in with your credentials, disconnect from wifi/4G.
+- Check what happens if you have no default browser and no browser at all.
+
+Application
+- Check with multiple devices if the app resizes perfectly.
+- Connect to a wifi with no internet connection.
+- Check if the app works well on root/jailbroken devices.
+- Check what happens when you select low power mode.
+- Check the app view on multitasking.
+- Check if the app handles the rotate mode well.
+- Check if the zoom view does not overflow.
+
