@@ -145,10 +145,10 @@ class _DisplayPostsState extends State<DisplayPosts> {
                           padding: EdgeInsets.fromLTRB(
                               MediaQuery.of(context).size.width / 1.5, 0, 0, 0),
                           child: Text(_posts
-                              .elementAt(index)
-                              .all_awardings!
-                              .length
-                              .toString() +
+                                  .elementAt(index)
+                                  .all_awardings!
+                                  .length
+                                  .toString() +
                               ' rewards'),
                         ),
                       Padding(
@@ -169,23 +169,40 @@ class _DisplayPostsState extends State<DisplayPosts> {
                           play: true,
                         ),
                       if (_posts.elementAt(index).preview != null &&
-                          _posts.elementAt(index).preview!.reddit_video_preview == true)
+                          _posts
+                                  .elementAt(index)
+                                  .preview!
+                                  .reddit_video_preview ==
+                              true)
                         VideoWidget(
-                          url: _posts.elementAt(index).preview!.reddit_video_url!,
+                          url: _posts
+                              .elementAt(index)
+                              .preview!
+                              .reddit_video_url!,
                           play: false,
                         ),
                       if (_posts.elementAt(index).post_hint != null &&
                           _posts.elementAt(index).post_hint == 'image')
-                        Column(
-                          children: [
-                            ListTile(
-                              title: Text(_posts.elementAt(index).title),
-                              subtitle: Image.network(
-                                  _posts.elementAt(index).preview!.source_url),
+                        Image.network(
+                            _posts.elementAt(index).preview!.source_url),
+                      if (!_posts
+                          .elementAt(index)
+                          .url
+                          .startsWith('https://www.reddit.com/r/'))
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 15, 0, 0),
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: ExpandableText(
+                              _posts.elementAt(index).url,
+                              expandText: 'show more',
+                              collapseText: 'show less',
+                              maxLines: 2,
+                              linkColor: Colors.blue,
+                              collapseOnTextTap: true,
                             ),
-                          ],
+                          ),
                         ),
-                      const Padding(padding: EdgeInsets.all(5)),
                       ListTile(
                         title: Row(
                           children: [
