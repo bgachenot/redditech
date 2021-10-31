@@ -39,6 +39,60 @@ class _ProfileViewState extends State<ProfileView> {
     setState(() {});
   }
 
+  Widget _profileImages() {
+    if (_user.banner == false) {
+      return Stack(
+        children: [],
+      );
+    }
+    return Stack(
+      children: [
+        Container(
+          height: 100,
+          decoration: BoxDecoration(
+            color: Theme.of(context).highlightColor,
+            image: DecorationImage(
+              image: NetworkImage(_user.bannerURL),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 40, 0, 5),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 6,
+                  color: Colors.grey.shade900,
+                  spreadRadius: 2,
+                )
+              ],
+            ),
+            child: CircleAvatar(
+              backgroundColor: Theme.of(context).primaryColorDark,
+              backgroundImage: NetworkImage(_user.iconURL),
+              radius: 50.0,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+              MediaQuery.of(context).size.width - 150, 110, 0, 0),
+          child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/trophies');
+              },
+              child: const Text(
+                'My trophies',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              )),
+        ),
+      ],
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -50,223 +104,140 @@ class _ProfileViewState extends State<ProfileView> {
     if (_initFinished == false) {
       return const LoadingDataScreen();
     } else {
-      return MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text("Profile Page"),
-            backgroundColor: Colors.deepOrange,
-          ),
-          body: Column(
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(_user.namePrefixed),
+          centerTitle: true,
+        ),
+        body: RefreshIndicator(
+          onRefresh: () {
+            return initProfile();
+          },
+          child: Column(
             children: [
-              SizedBox(
-                width: double.infinity,
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
+              _profileImages(),
+              Card(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                elevation: 5.0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 6.0, vertical: 12.0),
+                  child: Row(
                     children: [
-                      Stack(
-                        children: [
-                          Container(
-                            height: 150,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              image: DecorationImage(
-                                image: NetworkImage(_user.bannerURL),
-                                fit: BoxFit.cover,
+                      Expanded(
+                        child: Column(
+                          children: [
+                            const Text(
+                              "Karma",
+                              style: TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 25, 0, 5),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    blurRadius: 6,
-                                    color: Colors.grey.shade900,
-                                    spreadRadius: 2,
-                                  )
-                                ],
+                            const SizedBox(
+                              height: 5.0,
+                            ),
+                            Text(
+                              _user.totalKarma.toString(),
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.black,
                               ),
-                              child: CircleAvatar(
-                                backgroundColor:
-                                    Theme.of(context).primaryColorDark,
-                                backgroundImage: NetworkImage(_user.iconURL),
-                                radius: 50.0,
+                            )
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            const Text(
+                              "Trophies",
+                              style: TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      Text(
-                        _user.name,
-                        style: const TextStyle(
-                          fontSize: 22.0,
-                          color: Colors.black,
+                            const SizedBox(
+                              height: 5.0,
+                            ),
+                            Text(
+                              _trophies.length.toString(),
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.black,
+                              ),
+                            )
+                          ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      Card(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 5.0),
-                        clipBehavior: Clip.antiAlias,
-                        color: Colors.white,
-                        elevation: 5.0,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 22.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      "Karma",
-                                      style: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      _user.totalKarma.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black,
-                                      ),
-                                    )
-                                  ],
-                                ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            const Text(
+                              "Cake Day",
+                              style: TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      "Trophies",
-                                      style: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      _trophies.length.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black,
-                                      ),
-                                    )
-                                  ],
-                                ),
+                            ),
+                            const SizedBox(
+                              height: 5.0,
+                            ),
+                            Text(
+                              _createdAccountInDays.toString(),
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.black,
                               ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      "Cake Day",
-                                      style: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      _createdAccountInDays.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.black,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                            )
+                          ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              const Padding(
+                padding: EdgeInsets.all(6),
+              ),
+              const Text(
+                "Bio:",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontStyle: FontStyle.normal,
+                  fontSize: 28.0,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(6),
+              ),
+              Expanded(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Bio:",
-                      style: TextStyle(
-                          color: Colors.redAccent,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 28.0),
+                    const Padding(
+                      padding: EdgeInsets.all(6),
                     ),
-                    const SizedBox(
-                      height: 5.0,
-                    ),
-                    Text(
-                      _user.description,
-                      style: const TextStyle(
-                        fontSize: 22.0,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.black,
-                        letterSpacing: 2.0,
+                    SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Text(
+                        _user.description,
+                        style: const TextStyle(
+                          fontSize: 22.0,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.black,
+                          letterSpacing: 2.0,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              SizedBox(
-                width: 300.00,
-                child: RaisedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/trophies');
-                    },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(80.0)),
-                    elevation: 0.0,
-                    padding: const EdgeInsets.all(0.0),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                            begin: Alignment.centerRight,
-                            end: Alignment.centerLeft,
-                            colors: [Colors.orange, Colors.blueAccent]),
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      child: Container(
-                        constraints: const BoxConstraints(
-                            maxWidth: 300.0, minHeight: 50.0),
-                        alignment: Alignment.center,
-                        child: const Text(
-                          "View my trophies",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 26.0,
-                              fontWeight: FontWeight.w300),
-                        ),
-                      ),
-                    )),
               ),
             ],
           ),
