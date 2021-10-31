@@ -268,35 +268,16 @@ class NetworkHelper {
     return user;
   }
 
-  Future<String?> getCommunityIcon(String name) async {
-    var response = await http.get(
-        Uri.parse('https://www.reddit.com/r/$name/about.json?raw_json=1'),
-        headers: {
-          'User-Agent':
-              'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
-        });
-    if (response.statusCode == 401) {
-      throw ExceptionLoginInvalid();
-    }
-    Map<String, dynamic> resp = jsonDecode(response.body);
-    return parseredditStrings(resp['data']['community_icon']);
-  }
-
-  Future<List<SubRedditSearch>> fetchSubreddits(String query) async {
+  Future<List<SubRedditSearch>> searchSubreddits(String query) async {
     List<SubRedditSearch> _subreddits = [];
     String _token = (await _getAccessToken())!;
-    var response = await http.post(
-      Uri.parse('https://oauth.reddit.com/api/search_subreddits'),
+    var response = await http.get(
+      Uri.parse(
+          'https://oauth.reddit.com/search?q=$query&type=sr&restrict_sr=true&raw_json=1'),
       headers: {
         'authorization': 'bearer ' + _token,
         'User-Agent':
-            'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
-      },
-      body: {
-        'exact': 'false',
-        'include_over_18': 'false',
-        'include_unadvertisable': 'false',
-        'query': query,
+        'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
       },
     );
     if (response.statusCode == 401) {
@@ -304,14 +285,56 @@ class NetworkHelper {
     }
     Map<String, dynamic> resp = jsonDecode(response.body);
 
-    for (var element in resp['subreddits']) {
-      SubRedditSearch _subreddit = SubRedditSearch(
-          active_user_count: element['active_user_count'],
-          icon_img: parseredditStrings(element['icon_img']),
-          community_icon: await getCommunityIcon(element['name']),
-          name: element['name'],
-          subscriber_count: element['subscriber_count']);
-      _subreddits.add(_subreddit);
+    if (resp.containsKey('data') &&
+        (resp['data'] as Map<String, dynamic>).containsKey('children')) {
+      for (var element in resp['data']['children']) {
+        SubRedditSearch _subreddit = SubRedditSearch(
+            display_name: element['data']['display_name'],
+            icon_img: parseredditStrings(element['data']['icon_img']),
+            display_name_prefixed: element['data']['display_name_prefixed'],
+            subscribers: element['data']['subscribers'] ?? 0,
+            name: element['data']['name'],
+            public_description: parseredditStrings(element['data']['public_description']),
+            community_icon:
+            parseredditStrings(element['data']['community_icon']),
+            id: element['data']['id']);
+        _subreddits.add(_subreddit);
+      }
+    }
+    return _subreddits;
+  }
+  Future<List<SubRedditSearch>> searchMoreSubreddits(String query, String lastFullName) async {
+    List<SubRedditSearch> _subreddits = [];
+    String _token = (await _getAccessToken())!;
+    var response = await http.get(
+      Uri.parse(
+          'https://oauth.reddit.com/search?q=$query&type=sr&restrict_sr=true&raw_json=1&after=$lastFullName'),
+      headers: {
+        'authorization': 'bearer ' + _token,
+        'User-Agent':
+        'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+      },
+    );
+    if (response.statusCode == 401) {
+      throw ExceptionLoginInvalid();
+    }
+    Map<String, dynamic> resp = jsonDecode(response.body);
+
+    if (resp.containsKey('data') &&
+        (resp['data'] as Map<String, dynamic>).containsKey('children')) {
+      for (var element in resp['data']['children']) {
+        SubRedditSearch _subreddit = SubRedditSearch(
+            display_name: element['data']['display_name'],
+            icon_img: parseredditStrings(element['data']['icon_img']),
+            display_name_prefixed: element['data']['display_name_prefixed'],
+            subscribers: element['data']['subscribers'] ?? 0,
+            name: element['data']['name'],
+            public_description: parseredditStrings(element['data']['public_description']),
+            community_icon:
+            parseredditStrings(element['data']['community_icon']),
+            id: element['data']['id']);
+        _subreddits.add(_subreddit);
+      }
     }
     return _subreddits;
   }
@@ -319,8 +342,7 @@ class NetworkHelper {
   Future<SubReddit> fetchSubredditData(subredditName) async {
     String _token = (await _getAccessToken())!;
     var response = await http.get(
-        Uri.parse(
-            'https://oauth.reddit.com/r/$subredditName/about?raw_json=1'),
+        Uri.parse('https://oauth.reddit.com/r/$subredditName/about?raw_json=1'),
         headers: {
           'authorization': 'bearer ' + _token,
           'User-Agent':
@@ -342,7 +364,8 @@ class NetworkHelper {
       public_description: resp['data']['public_description'],
       user_has_favorited: resp['data']['user_has_favorited'],
       community_icon: parseredditStrings(resp['data']['community_icon']),
-      banner_background_image: parseredditStrings(resp['data']['banner_background_image']),
+      banner_background_image:
+          parseredditStrings(resp['data']['banner_background_image']),
       description_html: resp['data']['description_html'],
       created: resp['data']['created'],
       user_is_subscriber: resp['data']['user_is_subscriber'],

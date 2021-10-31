@@ -16,15 +16,53 @@ class SearchView extends StatefulWidget {
 class _SearchViewState extends State<SearchView> {
   final NetworkHelper _networkHelper = NetworkHelper();
   List<SubRedditSearch> _subReddits = [];
+  late ScrollController _scrollController;
+  bool _isLoadingMore = false;
+  late String _lastQuery;
 
-  Future<void> getSubreddits(query) async {
+  Future<void> getSubreddits() async {
     try {
-      _subReddits = await _networkHelper.fetchSubreddits(query);
+      _subReddits = await _networkHelper.searchSubreddits(_lastQuery);
     } on ExceptionLoginInvalid {
       Navigator.pushReplacementNamed(context, '/login',
           arguments: {'_error': 'Authentication expired.'});
     }
     setState(() {});
+  }
+
+  Future<void> loadMoreSubreddits() async {
+    try {
+      _isLoadingMore = true;
+      _subReddits.addAll(await _networkHelper.searchMoreSubreddits(_lastQuery, _subReddits.elementAt(_subReddits.length - 1).name));
+      _isLoadingMore = false;
+    } on ExceptionLoginInvalid {
+      Navigator.pushReplacementNamed(context, '/login',
+          arguments: {'error': 'Authentication expired.'});
+    }
+    setState(() {});
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      if (_isLoadingMore == false) {
+        loadMoreSubreddits();
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    super.dispose();
   }
 
   @override
@@ -40,7 +78,14 @@ class _SearchViewState extends State<SearchView> {
             hintText: 'Superstonk',
             maxLength: 21,
             onTypingFinished: (query) {
-              getSubreddits(query);
+              _lastQuery = query;
+              if (query.length >= 3) {
+                getSubreddits();
+              } else {
+                setState(() {
+                  _subReddits = [];
+                });
+              }
             },
             onClearButtonPressed: (query) {
               setState(() {
@@ -49,23 +94,63 @@ class _SearchViewState extends State<SearchView> {
             },
           ),
           Expanded(
-            child: ListView.builder(
-                itemCount: _subReddits.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: subredditIcon(_subReddits.elementAt(index).community_icon, _subReddits.elementAt(index).icon_img),
-                    title: Text(_subReddits.elementAt(index).name),
-                    trailing: const Icon(Icons.arrow_forward),
-                    onTap: () async {
-                      SubReddit _subreddit =
-                          await _networkHelper.fetchSubredditData(
-                              _subReddits.elementAt(index).name);
-                      Navigator.pushNamed(context, '/subreddit',
-                          arguments: {'subreddit': _subreddit});
-                    },
-                  );
-                }),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Scrollbar(
+                isAlwaysShown: true,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: _subReddits.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () async {
+                        try {
+                          SubReddit _subreddit =
+                              await _networkHelper.fetchSubredditData(
+                                  _subReddits.elementAt(index).display_name);
+                          Navigator.pushNamed(context, '/subreddit',
+                              arguments: {'subreddit': _subreddit});
+                        } on ExceptionLoginInvalid {
+                          Navigator.pushReplacementNamed(context, '/login',
+                              arguments: {'error': 'Authentication expired.'});
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Stack(
+                            children: [
+                              subredditIcon(
+                                  _subReddits.elementAt(index).community_icon,
+                                  _subReddits.elementAt(index).icon_img),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(100, 0, 0, 0),
+                                child: Text(
+                                    _subReddits
+                                        .elementAt(index)
+                                        .display_name_prefixed,
+                                    style:
+                                        Theme.of(context).textTheme.headline6),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(100, 30, 0, 0),
+                                child: Text(
+                                  '${_subReddits.elementAt(index).subscribers} members',
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.grey[700]),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
           ),
         ],
       ),
