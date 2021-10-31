@@ -89,6 +89,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
           collapseText: 'show less',
           maxLines: 5,
           linkColor: Colors.blue,
+          collapseOnTextTap: true,
         ),
       );
     } else {
@@ -120,93 +121,88 @@ class _DisplayPostsState extends State<DisplayPosts> {
             itemBuilder: (context, index) {
               return Column(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      //Navigator.pushNamed(context, '/post', arguments: {'post': _posts.elementAt(index)});
-                    },
-                    child: Column(
-                      children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      ListTile(
+                        leading: subredditIcon(
+                            _posts.elementAt(index).subReddit.community_icon,
+                            _posts.elementAt(index).subReddit.icon_img),
+                        title: Text(_posts
+                            .elementAt(index)
+                            .subReddit
+                            .display_name_prefixed),
+                        subtitle: Text('u/' + _posts.elementAt(index).author),
+                        trailing: const Icon(Icons.arrow_forward),
+                        onTap: () async {
+                          Navigator.pushNamed(context, '/subreddit',
+                              arguments: {
+                                'subreddit': _posts.elementAt(index).subReddit
+                              });
+                        },
+                      ),
+                      if (_posts.elementAt(index).all_awardings != null)
                         ListTile(
-                          leading: subredditIcon(
-                              _posts.elementAt(index).subReddit.community_icon,
-                              _posts.elementAt(index).subReddit.icon_img),
-                          title: Text(_posts
-                              .elementAt(index)
-                              .subReddit
-                              .display_name_prefixed),
-                          subtitle: Text('u/' + _posts.elementAt(index).author),
+                          tileColor: Colors.grey[300],
+                          leading: const Text('Show rewards'),
                           trailing: const Icon(Icons.arrow_forward),
-                          onTap: () async {
-                            Navigator.pushNamed(context, '/subreddit',
-                                arguments: {
-                                  'subreddit': _posts.elementAt(index).subReddit
-                                });
-                          },
+                          onTap: () {},
                         ),
-                        if (_posts.elementAt(index).all_awardings != null)
-                          ListTile(
-                            tileColor: Colors.grey[300],
-                            leading: const Text('Show rewards'),
-                            trailing: const Icon(Icons.arrow_forward),
-                            onTap: () {},
-                          ),
-                        if (_posts.elementAt(index).is_video &&
-                            _posts.elementAt(index).media!.reddit_video)
-                          VideoWidget(
-                            url: _posts
-                                .elementAt(index)
-                                .media!
-                                .reddit_video_url!,
-                            play: true,
-                          ),
-                        if (_posts.elementAt(index).post_hint != null &&
-                            _posts.elementAt(index).post_hint == 'image')
-                          Column(
-                            children: [
-                              ListTile(
-                                title: Text(_posts.elementAt(index).title),
-                                subtitle: Image.network(_posts
-                                    .elementAt(index)
-                                    .preview!
-                                    .source_url),
-                              ),
-                            ],
-                          ),
-                        _displayText(index),
-                        const Padding(padding: EdgeInsets.all(5)),
-                        ListTile(
-                          title: Row(
-                            children: [
-                              const FaIcon(FontAwesomeIcons.commentAlt),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
-                              Text(prettyNumber(
-                                  _posts.elementAt(index).num_comments)),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
-                              const FaIcon(FontAwesomeIcons.arrowAltCircleUp),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
-                              Text(prettyNumber(_posts.elementAt(index).ups)),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
-                              const FaIcon(FontAwesomeIcons.arrowAltCircleDown),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
-                              Text(prettyNumber(_posts.elementAt(index).downs)),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(16, 0, 0, 0)),
-                              const FaIcon(FontAwesomeIcons.hourglass),
-                              const Padding(
-                                  padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
-                              Text(difference(_posts.elementAt(index).created,
-                                      false, true) +
-                                  ' hours'),
-                            ],
-                          ),
+                      if (_posts.elementAt(index).is_video &&
+                          _posts.elementAt(index).media!.reddit_video)
+                        VideoWidget(
+                          url: _posts
+                              .elementAt(index)
+                              .media!
+                              .reddit_video_url!,
+                          play: true,
                         ),
-                      ],
-                    ),
+                      if (_posts.elementAt(index).post_hint != null &&
+                          _posts.elementAt(index).post_hint == 'image')
+                        Column(
+                          children: [
+                            ListTile(
+                              title: Text(_posts.elementAt(index).title),
+                              subtitle: Image.network(_posts
+                                  .elementAt(index)
+                                  .preview!
+                                  .source_url),
+                            ),
+                          ],
+                        ),
+                      _displayText(index),
+                      const Padding(padding: EdgeInsets.all(5)),
+                      ListTile(
+                        title: Row(
+                          children: [
+                            const FaIcon(FontAwesomeIcons.commentAlt),
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
+                            Text(prettyNumber(
+                                _posts.elementAt(index).num_comments)),
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
+                            const FaIcon(FontAwesomeIcons.arrowAltCircleUp),
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
+                            Text(prettyNumber(_posts.elementAt(index).ups)),
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
+                            const FaIcon(FontAwesomeIcons.arrowAltCircleDown),
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
+                            Text(prettyNumber(_posts.elementAt(index).downs)),
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(16, 0, 0, 0)),
+                            const FaIcon(FontAwesomeIcons.hourglass),
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
+                            Text(difference(_posts.elementAt(index).created,
+                                    false, true) +
+                                ' hours'),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               );

@@ -104,24 +104,9 @@ class _SubRedditViewState extends State<SubRedditView> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Scrollbar(
-          controller: _scrollController,
-          child: Column(
-            children: [
-              _displayIcons(),
-              Text(_subreddit.title),
-              Text(prettyNumber(_subreddit.subscribers) + ' members'),
-              if (_subreddit.public_description != null)
-                ExpandableText(
-                  _subreddit.public_description!,
-                  expandText: 'show more',
-                  collapseText: 'show less',
-                  maxLines: 1,
-                  linkColor: Colors.blue,
-                ),
-            ],
-          ),
-        ),
+        child: SizedBox(height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: SubredditPostsView()),
       ),
     );
   }
