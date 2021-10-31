@@ -1,9 +1,10 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:intl/intl.dart' as intl;
 
 class ExceptionLoginRandomString implements Exception {}
+
 class ExceptionLoginUserRefused implements Exception {}
+
 class ExceptionLoginInvalid implements Exception {}
 
 const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
@@ -11,7 +12,6 @@ Random _rng = Random();
 
 String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
     length, (_) => _chars.codeUnitAt(_rng.nextInt(_chars.length))));
-
 
 String prettyNumber(int number) {
   String result = number.toString();
@@ -67,7 +67,8 @@ String prettyNumber(int number) {
 }
 
 String difference(double time, bool days, bool hours) {
-  DateTime _accountCreatedSince = DateTime.fromMillisecondsSinceEpoch((time * 1000).toInt(), isUtc: true);
+  DateTime _accountCreatedSince =
+      DateTime.fromMillisecondsSinceEpoch((time * 1000).toInt(), isUtc: true);
   if (days) {
     return DateTime.now().difference(_accountCreatedSince).inDays.toString();
   }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-Widget iconWidget(String? community_icon, String? icon_img) {
-  if (community_icon != null) {
-    return Image.network(community_icon);
+Widget iconWidget(String? communityIcon, String? iconImg) {
+  if (communityIcon != null) {
+    return Image.network(communityIcon);
   }
-  if (icon_img != null) {
-    return Image.network(icon_img);
+  if (iconImg != null) {
+    return Image.network(iconImg);
   }
   return Image.network(
     'https://b.thumbs.redditmedia.com/aUQZr4O4EasbsqrmhZ7JdJUvHGX-mova9SPT2QwlINs.png',

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:outline_search_bar/outline_search_bar.dart';
 import 'package:redditech/helpers/network.dart';
 import 'package:redditech/helpers/utils.dart';
@@ -21,7 +20,7 @@ class _SearchViewState extends State<SearchView> {
   Future<void> getSubreddits(query) async {
     try {
       _subReddits = await _networkHelper.fetchSubreddits(query);
-    } on ExceptionLoginInvalid catch (e) {
+    } on ExceptionLoginInvalid {
       Navigator.pushReplacementNamed(context, '/login',
           arguments: {'_error': 'Authentication expired.'});
     }

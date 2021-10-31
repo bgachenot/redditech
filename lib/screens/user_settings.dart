@@ -18,12 +18,12 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   bool _initFinished = false;
   Map _data = {};
   bool modalroute = false;
-  String? _errorMsg = null;
+  String? _errorMsg;
 
   Future<void> initProfile() async {
     try {
       _userPreferencies = await _networkHelper.fetchUserPrefs();
-    } on ExceptionLoginInvalid catch (e) {
+    } on ExceptionLoginInvalid {
       Navigator.pushReplacementNamed(context, '/login',
           arguments: {'error': 'Authentication expired.'});
     }
@@ -62,9 +62,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                 });
               }
               _errorMsg = null;
-              print(_errorMsg);
               setState(() {});
-            } on ExceptionLoginInvalid catch (e) {
+            } on ExceptionLoginInvalid {
               Navigator.pushReplacementNamed(context, '/login',
                   arguments: {'error': 'Authentication expired.'});
             }

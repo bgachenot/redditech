@@ -20,7 +20,7 @@ class _TrophiesViewState extends State<TrophiesView> {
   Future<void> initProfile() async {
     try {
       _trophies = await _networkHelper.fetchUserTrophies();
-    } on ExceptionLoginInvalid catch (e) {
+    } on ExceptionLoginInvalid {
       Navigator.pushReplacementNamed(context, '/login',
           arguments: {'error': 'Authentication expired.'});
     }

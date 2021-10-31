@@ -1,15 +1,12 @@
 import 'dart:convert';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:redditech/helpers/parser.dart';
 import 'package:redditech/helpers/utils.dart';
 import 'package:http/http.dart' as http;
-import 'package:redditech/model/all_awardings.dart';
 import 'package:redditech/model/posts.dart';
 import 'package:redditech/model/preferences.dart';
-import 'package:redditech/model/preview.dart';
 import 'package:redditech/model/subreddit.dart';
 import 'package:redditech/model/subreddit_search.dart';
 import 'package:redditech/model/trophies.dart';
@@ -140,7 +137,7 @@ class NetworkHelper {
 
   Future<bool> patchUserPrefs(String keyName, dynamic keyValue) async {
     String _token = (await _getAccessToken())!;
-    String _body = '{\"$keyName\": \"$keyValue\"}';
+    String _body = '{"$keyName": "$keyValue"}';
     var response = await http.patch(
       Uri.parse('https://oauth.reddit.com/api/v1/me/prefs'),
       headers: {
@@ -190,7 +187,7 @@ class NetworkHelper {
   }
 
   Future<bool> subRedditSubscription(
-      String subreddit_thing_name, bool sub) async {
+      String subredditThingName, bool sub) async {
     String _token = (await _getAccessToken())!;
     var response = await http.post(
       Uri.parse('https://oauth.reddit.com/api/subscribe'),
@@ -202,7 +199,7 @@ class NetworkHelper {
       },
       body: {
         'action': sub ? 'sub' : 'unsub',
-        'sr': subreddit_thing_name,
+        'sr': subredditThingName,
       },
     );
     if (response.statusCode == 401) {
@@ -319,11 +316,11 @@ class NetworkHelper {
     return _subreddits;
   }
 
-  Future<SubReddit> fetchSubredditData(subreddit_name) async {
+  Future<SubReddit> fetchSubredditData(subredditName) async {
     String _token = (await _getAccessToken())!;
     var response = await http.get(
         Uri.parse(
-            'https://oauth.reddit.com/r/$subreddit_name/about?raw_json=1'),
+            'https://oauth.reddit.com/r/$subredditName/about?raw_json=1'),
         headers: {
           'authorization': 'bearer ' + _token,
           'User-Agent':
@@ -354,7 +351,8 @@ class NetworkHelper {
       banner_img: parseredditStrings(resp['data']['banner_img']),
       description: resp['data']['description'],
       url: resp['data']['url'],
-      mobile_banner_image: resp['data']['mobile_banner_image'],
+      mobile_banner_image:
+          parseredditStrings(resp['data']['mobile_banner_image']),
     );
     return _subreddit;
   }
@@ -415,14 +413,16 @@ class NetworkHelper {
     return _posts;
   }
 
-  Future<List<Posts>> fetchMoreUserPosts(String endpoint, String lastFullName) async {
+  Future<List<Posts>> fetchMoreUserPosts(
+      String endpoint, String lastFullName) async {
     String _token = (await _getAccessToken())!;
     var response = await http.get(
-        Uri.parse('https://oauth.reddit.com/$endpoint?raw_json=1&limit=5&after=$lastFullName'),
+        Uri.parse(
+            'https://oauth.reddit.com/$endpoint?raw_json=1&limit=5&after=$lastFullName'),
         headers: {
           'authorization': 'bearer ' + _token,
           'User-Agent':
-          'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+              'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
         });
     if (response.statusCode == 401) {
       throw ExceptionLoginInvalid();
@@ -433,7 +433,7 @@ class NetworkHelper {
     List<dynamic> toto = resp['data']['children'];
     for (var element in toto) {
       SubReddit _subreddit =
-      await fetchSubredditData(element['data']['subreddit']);
+          await fetchSubredditData(element['data']['subreddit']);
       Posts _post = Posts(
         subreddit: element['data']['subreddit'],
         selftext: element['data']['selftext'],

@@ -1,5 +1,3 @@
-import 'package:chewie/chewie.dart';
-import 'package:chewie_audio/chewie_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:redditech/helpers/network.dart';
@@ -8,7 +6,6 @@ import 'package:redditech/model/posts.dart';
 import 'package:redditech/widgets/Subreddit_icon.dart';
 import 'package:redditech/widgets/loading_data.dart';
 import 'package:redditech/widgets/video_widget.dart';
-import 'package:video_player/video_player.dart';
 
 class DisplayPosts extends StatefulWidget {
   final String endpoint;
@@ -29,7 +26,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
   Future<void> initPosts() async {
     try {
       _posts = await _networkHelper.fetchUserPosts(widget.endpoint);
-    } on ExceptionLoginInvalid catch (e) {
+    } on ExceptionLoginInvalid {
       Navigator.pushReplacementNamed(context, '/login',
           arguments: {'error': 'Authentication expired.'});
     }
@@ -43,7 +40,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
       _posts.addAll(await _networkHelper.fetchMoreUserPosts(
           widget.endpoint, _posts.elementAt(_posts.length - 1).subreddit_id));
       _isLoadingMore = false;
-    } on ExceptionLoginInvalid catch (e) {
+    } on ExceptionLoginInvalid {
       Navigator.pushReplacementNamed(context, '/login',
           arguments: {'error': 'Authentication expired.'});
     }

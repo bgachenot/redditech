@@ -19,13 +19,12 @@ class _ProfileViewState extends State<ProfileView> {
   late List<Trophies> _trophies;
   late int _createdAccountInDays;
   bool _initFinished = false;
-  final ScrollController _controllerOne = ScrollController();
 
   Future<void> initProfile() async {
     try {
       _user = await _networkHelper.fetchUserData();
       _trophies = await _networkHelper.fetchUserTrophies();
-    } on ExceptionLoginInvalid catch (e) {
+    } on ExceptionLoginInvalid {
       Navigator.pushReplacementNamed(context, '/login',
           arguments: {'error': 'Authentication expired.'});
     }

@@ -33,11 +33,6 @@ class _LoadingDataScreenState extends State<LoadingDataScreen> {
     super.dispose();
   }
 
-  static const _spinkit = SpinKitFadingCircle(
-    color: Colors.white,
-    size: 50.0,
-  );
-
   @override
   Widget build(BuildContext context) {
     const _spinKit = SpinKitSpinningLines(

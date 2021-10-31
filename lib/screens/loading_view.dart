@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart' as http;
 
 class LoadingView extends StatefulWidget {
   const LoadingView({Key? key}) : super(key: key);
@@ -11,19 +10,14 @@ class LoadingView extends StatefulWidget {
 }
 
 class _LoadingViewState extends State<LoadingView> {
-  void fetchUserData(token) async {
-    var response = await http.get(
-        Uri.parse('https://oauth.reddit.com/api/v1/me'),
-        headers: {'authorization': 'bearer ' + token});
-  }
-
   void _load() async {
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     String? _accessToken = await storage.read(key: 'access_token');
 
     if (_accessToken == null) {
       await storage.deleteAll();
-      Navigator.pushReplacementNamed(context, '/login', arguments: {'error': ''});
+      Navigator.pushReplacementNamed(context, '/login',
+          arguments: {'error': ''});
     }
     Navigator.pushReplacementNamed(context, '/main');
   }

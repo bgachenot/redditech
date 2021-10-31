@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:redditech/screens/display_posts.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FeedView extends StatefulWidget {
   const FeedView({Key? key}) : super(key: key);

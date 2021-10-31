@@ -14,6 +14,20 @@ class _SubRedditViewState extends State<SubRedditView> {
   final NetworkHelper _networkHelper = NetworkHelper();
   Map _data = {};
   late SubReddit _subreddit;
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    //_scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    //_scrollController.removeListener(_scrollListener);
+    super.dispose();
+  }
 
   Widget _getAction() {
     if (_subreddit.user_is_subscriber == false) {
@@ -22,7 +36,7 @@ class _SubRedditViewState extends State<SubRedditView> {
           try {
             _subreddit.user_is_subscriber = await _networkHelper
                 .subRedditSubscription(_subreddit.name, true);
-          } on ExceptionLoginInvalid catch (e) {
+          } on ExceptionLoginInvalid {
             Navigator.pushReplacementNamed(context, '/login',
                 arguments: {'error': 'Authentication expired.'});
           }
@@ -42,7 +56,7 @@ class _SubRedditViewState extends State<SubRedditView> {
         try {
           _subreddit.user_is_subscriber = await _networkHelper
               .subRedditSubscription(_subreddit.name, false);
-        } on ExceptionLoginInvalid catch (e) {
+        } on ExceptionLoginInvalid {
           Navigator.pushReplacementNamed(context, '/login',
               arguments: {'error': 'Authentication expired.'});
         }
@@ -71,27 +85,30 @@ class _SubRedditViewState extends State<SubRedditView> {
           _getAction(),
         ],
       ),
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              if (_subreddit.mobile_banner_image != null &&
-                  _subreddit.mobile_banner_image != '')
-                Image.network(_subreddit.mobile_banner_image!),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(_subreddit.community_icon!),
-                  radius: 60,
+      body: Scrollbar(
+        controller: _scrollController,
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                if (_subreddit.mobile_banner_image != null &&
+                    _subreddit.mobile_banner_image != '')
+                  Image.network(_subreddit.mobile_banner_image!),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(_subreddit.community_icon!),
+                    radius: 60,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Text(_subreddit.title),
-          Text(_subreddit.subscribers.toString() + ' members'),
-          if (_subreddit.public_description != null)
-            Text(_subreddit.public_description!),
-        ],
+              ],
+            ),
+            Text(_subreddit.title),
+            Text(_subreddit.subscribers.toString() + ' members'),
+            if (_subreddit.public_description != null)
+              Text(_subreddit.public_description!),
+          ],
+        ),
       ),
     );
   }
