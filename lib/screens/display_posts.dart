@@ -69,6 +69,12 @@ class _DisplayPostsState extends State<DisplayPosts> {
     initPosts();
   }
 
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    super.dispose();
+  }
+
   Widget _displayText(index) {
     if (_posts.elementAt(index).selftext.length > 300) {
       return Column(
