@@ -129,9 +129,10 @@ class _DisplayPostsState extends State<DisplayPosts> {
                           subtitle: Text('u/' + _posts.elementAt(index).author),
                           trailing: const Icon(Icons.arrow_forward),
                           onTap: () async {
-                            Navigator.pushNamed(context, '/subreddit', arguments: {
-                              'subreddit': _posts.elementAt(index).subReddit
-                            });
+                            Navigator.pushNamed(context, '/subreddit',
+                                arguments: {
+                                  'subreddit': _posts.elementAt(index).subReddit
+                                });
                           },
                         ),
                         if (_posts.elementAt(index).all_awardings != null)
@@ -144,7 +145,10 @@ class _DisplayPostsState extends State<DisplayPosts> {
                         if (_posts.elementAt(index).is_video &&
                             _posts.elementAt(index).media!.reddit_video)
                           VideoWidget(
-                            url: _posts.elementAt(index).media!.reddit_video_url!,
+                            url: _posts
+                                .elementAt(index)
+                                .media!
+                                .reddit_video_url!,
                             play: true,
                           ),
                         if (_posts.elementAt(index).post_hint != null &&
@@ -153,8 +157,10 @@ class _DisplayPostsState extends State<DisplayPosts> {
                             children: [
                               ListTile(
                                 title: Text(_posts.elementAt(index).title),
-                                subtitle: Image.network(
-                                    _posts.elementAt(index).preview!.source_url),
+                                subtitle: Image.network(_posts
+                                    .elementAt(index)
+                                    .preview!
+                                    .source_url),
                               ),
                             ],
                           ),

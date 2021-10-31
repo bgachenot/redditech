@@ -78,9 +78,12 @@ class _FeedViewState extends State<FeedView>
       body: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
         controller: _tabController,
-        children: _myTabs.map((Tab tab) {
-          return DisplayPosts(endpoint: _myEndpoints[_tabController.index]);
-        }).toList(),
+        children: const [
+          DisplayPosts(endpoint: 'best'),
+          DisplayPosts(endpoint: 'top'),
+          DisplayPosts(endpoint: 'new'),
+          DisplayPosts(endpoint: 'random'),
+        ],
       ),
     );
   }
