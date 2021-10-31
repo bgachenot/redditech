@@ -15,53 +15,45 @@ String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
 
 String prettyNumber(int number) {
   String result = number.toString();
-  if (number >= 1000) {
+  if (number >= 1000 && number <= 9999) {
     number = number ~/ 100;
     var formatter = intl.NumberFormat('##0,0k');
     result = formatter.format(number);
-    return result;
   }
-  if (number >= 10000) {
+  if (number >= 10000 && number <= 99999) {
     number = number ~/ 1000;
     var formatter = intl.NumberFormat('##0,0k');
     result = formatter.format(number);
-    return result;
   }
-  if (number >= 100000) {
+  if (number >= 100000 && number <= 999999) {
     number = number ~/ 10000;
     var formatter = intl.NumberFormat('##0,0k');
     result = formatter.format(number);
-    return result;
   }
-  if (number >= 1000000) {
+  if (number >= 1000000 && number <= 9999999) {
     number = number ~/ 100000;
     var formatter = intl.NumberFormat('##0,0m');
     result = formatter.format(number);
-    return result;
   }
-  if (number >= 10000000) {
+  if (number >= 10000000 && number <= 99999999) {
     number = number ~/ 1000000;
     var formatter = intl.NumberFormat('##0,0m');
     result = formatter.format(number);
-    return result;
   }
-  if (number >= 100000000) {
+  if (number >= 100000000 && number <= 999999999) {
     number = number ~/ 10000000;
     var formatter = intl.NumberFormat('##0,0m');
     result = formatter.format(number);
-    return result;
   }
-  if (number >= 1000000000) {
+  if (number >= 1000000000 && number <= 9999999999) {
     number = number ~/ 100000000;
     var formatter = intl.NumberFormat('##0,0m');
     result = formatter.format(number);
-    return result;
   }
-  if (number >= 10000000000) {
+  if (number >= 10000000000 && number <= 9999999999) {
     number = number ~/ 1000000000;
     var formatter = intl.NumberFormat('##0,0M');
     result = formatter.format(number);
-    return result;
   }
   return result;
 }
