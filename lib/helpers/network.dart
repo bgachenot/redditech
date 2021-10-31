@@ -356,7 +356,6 @@ class NetworkHelper {
       url: resp['data']['url'],
       mobile_banner_image: resp['data']['mobile_banner_image'],
     );
-    print(_subreddit);
     return _subreddit;
   }
 
