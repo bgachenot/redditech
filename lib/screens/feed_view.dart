@@ -10,7 +10,6 @@ class FeedView extends StatefulWidget {
 
 class _FeedViewState extends State<FeedView>
     with SingleTickerProviderStateMixin {
-  final String _appBarTitle = "Top posts for you";
   static const List<Tab> _myTabs = <Tab>[
     Tab(
       child: Text(
@@ -61,7 +60,10 @@ class _FeedViewState extends State<FeedView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_appBarTitle),
+        title: Text(
+            _myEndpoints[_tabController.index].substring(0, 1).toUpperCase() +
+                _myEndpoints[_tabController.index].substring(1) +
+                ' posts for you'),
         centerTitle: true,
         bottom: TabBar(
           onTap: (index) {
