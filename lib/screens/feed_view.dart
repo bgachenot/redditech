@@ -37,7 +37,7 @@ class _FeedViewState extends State<FeedView>
     ),
     Tab(
       child: Text(
-        'controversial',
+        'Controversial',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
       ),
     ),
