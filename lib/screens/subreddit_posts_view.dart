@@ -16,11 +16,6 @@ class SubredditPostsView extends StatefulWidget {
 
 class _SubredditPostsViewState extends State<SubredditPostsView> with SingleTickerProviderStateMixin {
   final bodyGlobalKey = GlobalKey();
-  final List<Widget> myTabs = [
-    Tab(text: 'auto short'),
-    Tab(text: 'auto long'),
-    Tab(text: 'fixed'),
-  ];
   static const List<Tab> _myTabs = <Tab>[
     Tab(
       child: Text(
@@ -52,13 +47,6 @@ class _SubredditPostsViewState extends State<SubredditPostsView> with SingleTick
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
       ),
     ),
-  ];
-  static const List<String> _myEndpoints = [
-    "best",
-    "top",
-    "new",
-    "rising",
-    "controversial",
   ];
   late TabController _tabController;
   late ScrollController _scrollController;
