@@ -14,7 +14,8 @@ class SubredditPostsView extends StatefulWidget {
   _SubredditPostsViewState createState() => _SubredditPostsViewState();
 }
 
-class _SubredditPostsViewState extends State<SubredditPostsView> with SingleTickerProviderStateMixin {
+class _SubredditPostsViewState extends State<SubredditPostsView>
+    with SingleTickerProviderStateMixin {
   final bodyGlobalKey = GlobalKey();
   static const List<Tab> _myTabs = <Tab>[
     Tab(
@@ -63,7 +64,7 @@ class _SubredditPostsViewState extends State<SubredditPostsView> with SingleTick
         Padding(
             padding: const EdgeInsets.fromLTRB(20, 35, 0, 5),
             child:
-            subredditIcon(_subreddit.community_icon, _subreddit.icon_img)),
+                subredditIcon(_subreddit.community_icon, _subreddit.icon_img)),
       ],
     );
   }
@@ -229,11 +230,11 @@ class _SubredditPostsViewState extends State<SubredditPostsView> with SingleTick
           physics: const NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: [
-            DisplayPosts(endpoint: '/r/${_subreddit.title}/best'),
-            DisplayPosts(endpoint: '/r/${_subreddit.title}/top'),
-            DisplayPosts(endpoint: '/r/${_subreddit.title}/new'),
-            DisplayPosts(endpoint: '/r/${_subreddit.title}/rising'),
-            DisplayPosts(endpoint: '/r/${_subreddit.title}/controversial'),
+            DisplayPosts(endpoint: 'r/${_subreddit.title}/best'),
+            DisplayPosts(endpoint: 'r/${_subreddit.title}/top'),
+            DisplayPosts(endpoint: 'r/${_subreddit.title}/new'),
+            DisplayPosts(endpoint: 'r/${_subreddit.title}/rising'),
+            DisplayPosts(endpoint: 'r/${_subreddit.title}/controversial'),
           ],
         ),
       ),
