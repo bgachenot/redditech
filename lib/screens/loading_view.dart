@@ -18,8 +18,9 @@ class _LoadingViewState extends State<LoadingView> {
       await storage.deleteAll();
       Navigator.pushReplacementNamed(context, '/login',
           arguments: {'error': ''});
+    } else {
+      Navigator.pushReplacementNamed(context, '/main');
     }
-    Navigator.pushReplacementNamed(context, '/main');
   }
 
   @override
