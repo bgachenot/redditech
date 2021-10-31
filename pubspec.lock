@@ -240,6 +240,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.0.0"
+  rolling_switch:
+    dependency: "direct main"
+    description:
+      name: rolling_switch
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.2"
   simple_text_field:
     dependency: transitive
     description:

@@ -108,6 +108,15 @@ class _ProfileViewState extends State<ProfileView> {
         appBar: AppBar(
           title: Text(_user.namePrefixed),
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/userSettings', arguments: {});
+              },
+              icon: const Icon(Icons.settings),
+            ),
+            const Padding(padding: EdgeInsets.all(8)),
+          ],
         ),
         body: RefreshIndicator(
           onRefresh: () {

@@ -44,6 +44,7 @@ dependencies:
   chewie: ^1.2.2
   chewie_audio: ^1.2.0
   intl: ^0.17.0
+  rolling_switch: ^0.0.2
 
 dev_dependencies:
   flutter_test:

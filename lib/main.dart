@@ -8,6 +8,7 @@ import "package:redditech/screens/main_view.dart";
 import 'package:redditech/screens/reddit_login_view.dart';
 import 'package:redditech/screens/subreddit_view.dart';
 import 'package:redditech/screens/trophies_view.dart';
+import 'package:redditech/screens/user_settings.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +19,7 @@ void main() {
   runApp(MaterialApp(
     navigatorKey: NavigationService.navigationKey,
     initialRoute: '/',
+    debugShowCheckedModeBanner: false,
     theme: ThemeData.from(colorScheme: ColorScheme.light(background: Colors.grey.shade100)),
     routes: {
       '/': (context) => const LoadingView(),
@@ -26,6 +28,7 @@ void main() {
       '/subreddit': (context) => const SubRedditView(),
       '/post': (context) => const DisplayPost(),
       '/trophies': (context) => const TrophiesView(),
+      '/userSettings': (context) => const UserSettingsView(),
     },
   ));
 }

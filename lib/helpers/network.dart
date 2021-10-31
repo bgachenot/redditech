@@ -8,6 +8,7 @@ import 'package:redditech/helpers/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:redditech/model/all_awardings.dart';
 import 'package:redditech/model/posts.dart';
+import 'package:redditech/model/preferences.dart';
 import 'package:redditech/model/preview.dart';
 import 'package:redditech/model/subreddit.dart';
 import 'package:redditech/model/subreddit_search.dart';
@@ -86,7 +87,7 @@ class NetworkHelper {
       'response_type': 'code',
       'state': _randomString,
       'redirect_uri': _redirectURI + _callbackScheme,
-      'scope': 'identity read mysubreddits subscribe',
+      'scope': 'identity read mysubreddits subscribe account',
     });
     try {
       final _authenticateResult = await FlutterWebAuth.authenticate(
@@ -135,6 +136,57 @@ class NetworkHelper {
       //TODO: Handle multi lines in order to display the error message to the end user.
     }
     return false;
+  }
+
+  Future<bool> patchUserPrefs(String keyName, dynamic keyValue) async {
+    String _token = (await _getAccessToken())!;
+    String _body = '{\"$keyName\": \"$keyValue\"}';
+    var response = await http.patch(
+      Uri.parse('https://oauth.reddit.com/api/v1/me/prefs'),
+      headers: {
+        'authorization': 'bearer ' + _token,
+        'User-Agent':
+            'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+        'Content-Type': 'text/plain',
+      },
+      body: _body,
+    );
+    if (response.statusCode == 401) {
+      throw ExceptionLoginInvalid();
+    }
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<UserPreferencies> fetchUserPrefs() async {
+    String _token = (await _getAccessToken())!;
+    var response = await http
+        .get(Uri.parse('https://oauth.reddit.com/api/v1/me/prefs'), headers: {
+      'authorization': 'bearer ' + _token,
+      'User-Agent':
+          'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+    });
+    if (response.statusCode == 401) {
+      throw ExceptionLoginInvalid();
+    }
+    Map<String, dynamic> resp = jsonDecode(response.body);
+    UserPreferencies _userPreferencies = UserPreferencies(
+      accept_pms: resp['accept_pms'],
+      hide_from_robots: resp['hide_from_robots'],
+      allow_clicktracking: resp['allow_clicktracking'],
+      third_party_data_personalized_ads:
+          resp['third_party_data_personalized_ads'],
+      third_party_site_data_personalized_ads:
+          resp['third_party_site_data_personalized_ads'],
+      show_location_based_recommendations:
+          resp['show_location_based_recommendations'],
+      third_party_site_data_personalized_content:
+          resp['third_party_site_data_personalized_content'],
+      enable_followers: resp['enable_followers'],
+    );
+    return _userPreferencies;
   }
 
   Future<bool> subRedditSubscription(
