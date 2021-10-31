@@ -4,7 +4,7 @@ import 'package:redditech/helpers/network.dart';
 import 'package:redditech/helpers/utils.dart';
 import 'package:redditech/model/subreddit.dart';
 import 'package:redditech/model/subreddit_search.dart';
-import 'package:redditech/widgets/Subreddit_icon.dart';
+import 'package:redditech/widgets/subreddit_icon.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({Key? key}) : super(key: key);
@@ -54,7 +54,7 @@ class _SearchViewState extends State<SearchView> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    leading: iconWidget(_subReddits.elementAt(index).community_icon, _subReddits.elementAt(index).icon_img),
+                    leading: subredditIcon(_subReddits.elementAt(index).community_icon, _subReddits.elementAt(index).icon_img),
                     title: Text(_subReddits.elementAt(index).name),
                     trailing: const Icon(Icons.arrow_forward),
                     onTap: () async {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:redditech/helpers/network.dart';
 import 'package:redditech/helpers/utils.dart';
 import 'package:redditech/model/subreddit.dart';
+import 'package:redditech/widgets/subreddit_banner.dart';
+import 'package:redditech/widgets/subreddit_icon.dart';
 
 class SubRedditView extends StatefulWidget {
   const SubRedditView({Key? key}) : super(key: key);
@@ -72,6 +74,18 @@ class _SubRedditViewState extends State<SubRedditView> {
     );
   }
 
+  Widget _displayIcons() {
+    return Stack(
+      children: [
+        subredditBanner(_subreddit.mobile_banner_image, _subreddit.banner_img, _subreddit.banner_background_image),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 35, 0, 5),
+          child: subredditIcon(_subreddit.community_icon, _subreddit.icon_img)
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _data = _data.isNotEmpty
@@ -89,20 +103,7 @@ class _SubRedditViewState extends State<SubRedditView> {
         controller: _scrollController,
         child: Column(
           children: [
-            Stack(
-              children: [
-                if (_subreddit.mobile_banner_image != null &&
-                    _subreddit.mobile_banner_image != '')
-                  Image.network(_subreddit.mobile_banner_image!),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(_subreddit.community_icon!),
-                    radius: 60,
-                  ),
-                ),
-              ],
-            ),
+            _displayIcons(),
             Text(_subreddit.title),
             Text(_subreddit.subscribers.toString() + ' members'),
             if (_subreddit.public_description != null)

@@ -342,7 +342,7 @@ class NetworkHelper {
       public_description: resp['data']['public_description'],
       user_has_favorited: resp['data']['user_has_favorited'],
       community_icon: parseredditStrings(resp['data']['community_icon']),
-      banner_background_image: resp['data']['banner_background_image'],
+      banner_background_image: parseredditStrings(resp['data']['banner_background_image']),
       description_html: resp['data']['description_html'],
       created: resp['data']['created'],
       user_is_subscriber: resp['data']['user_is_subscriber'],

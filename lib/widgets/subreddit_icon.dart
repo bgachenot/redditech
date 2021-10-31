@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
-Widget iconWidget(String? communityIcon, String? iconImg) {
-  if (communityIcon != null) {
-    return Image.network(communityIcon);
+Widget subredditIcon(String? communityIcon, String? iconImg) {
+  if (communityIcon != null || iconImg != null) {
+    return CircleAvatar(
+      backgroundImage: NetworkImage(communityIcon ?? iconImg!),
+      radius: 40.0,
+    );
+  } else {
+    return const CircleAvatar(
+      backgroundColor: Colors.grey,
+      backgroundImage: NetworkImage(
+          'https://www.redditstatic.com/avatars/avatar_default_02_0DD3BB.png'),
+      radius: 40.0,
+    );
   }
-  if (iconImg != null) {
-    return Image.network(iconImg);
-  }
-  return Image.network(
-    'https://b.thumbs.redditmedia.com/aUQZr4O4EasbsqrmhZ7JdJUvHGX-mova9SPT2QwlINs.png',
-    color: Colors.grey[400],
-  );
 }
