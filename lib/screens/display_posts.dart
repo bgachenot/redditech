@@ -168,6 +168,12 @@ class _DisplayPostsState extends State<DisplayPosts> {
                           url: _posts.elementAt(index).media!.reddit_video_url!,
                           play: true,
                         ),
+                      if (_posts.elementAt(index).preview != null &&
+                          _posts.elementAt(index).preview!.reddit_video_preview == true)
+                        VideoWidget(
+                          url: _posts.elementAt(index).preview!.reddit_video_url!,
+                          play: false,
+                        ),
                       if (_posts.elementAt(index).post_hint != null &&
                           _posts.elementAt(index).post_hint == 'image')
                         Column(

@@ -46,11 +46,25 @@ List<AllAwardings>? parseAllAwardings(List<dynamic> jsonData) {
 
 Preview? parsePreview(Map<String, dynamic> jsonData) {
   if (jsonData.containsKey('preview')) {
-    return Preview(
-        enabled: jsonData['preview']['enabled'],
-        source_url: jsonData['preview']['images'][0]['source']['url'],
-        source_width: jsonData['preview']['images'][0]['source']['width'],
-        source_height: jsonData['preview']['images'][0]['source']['height']);
+    if ((jsonData['preview'] as Map<String, dynamic>)
+        .containsKey('reddit_video_preview')) {
+      return Preview(
+          enabled: jsonData['preview']['enabled'],
+          source_url: jsonData['preview']['images'][0]['source']['url'],
+          source_width: jsonData['preview']['images'][0]['source']['width'],
+          source_height: jsonData['preview']['images'][0]['source']['height'],
+          reddit_video_preview: true,
+          reddit_video_url: jsonData['preview']['reddit_video_preview']
+              ['fallback_url']);
+    } else {
+      return Preview(
+          enabled: jsonData['preview']['enabled'],
+          source_url: jsonData['preview']['images'][0]['source']['url'],
+          source_width: jsonData['preview']['images'][0]['source']['width'],
+          source_height: jsonData['preview']['images'][0]['source']['height'],
+          reddit_video_preview: false,
+          reddit_video_url: null);
+    }
   } else {
     return null;
   }
@@ -71,6 +85,17 @@ Media? parseMedia(Map<String, dynamic> jsonData) {
         reddit_video_width: jsonData['media']['reddit_video']['width'],
         reddit_video_duration: jsonData['media']['reddit_video']['duration'],
       );
+    }
+    if ((jsonData['media'] as Map<String, dynamic>).containsKey('oembed') &&
+        jsonData['type'] == 'redgifs.com') {
+      return Media(
+          reddit_video: false,
+          youtube_video: false,
+          reddit_gif: true,
+          reddit_video_url: null,
+          reddit_video_height: null,
+          reddit_video_width: null,
+          reddit_video_duration: null);
     }
     return null;
   }
