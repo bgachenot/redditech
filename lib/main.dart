@@ -18,7 +18,7 @@ void main() {
   runApp(MaterialApp(
     navigatorKey: NavigationService.navigationKey,
     initialRoute: '/',
-    theme: ThemeData.from(colorScheme: const ColorScheme.light()),
+    theme: ThemeData.from(colorScheme: ColorScheme.light(background: Colors.grey.shade100)),
     routes: {
       '/': (context) => const LoadingView(),
       '/login': (context) => const RedditLoginView(),
