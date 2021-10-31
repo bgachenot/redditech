@@ -373,14 +373,12 @@ class NetworkHelper {
       throw ExceptionLoginInvalid();
     }
     Map<String, dynamic> resp = jsonDecode(response.body);
-    // TODO: static which keeps resp['data']['after'] for pagination
 
     List<Posts> _posts = [];
     List<dynamic> toto = resp['data']['children'];
     for (var element in toto) {
       SubReddit _subreddit =
           await fetchSubredditData(element['data']['subreddit']);
-      // TODO: Check if we can GET the image of if we get a 403 Varnish Cache error
       Posts _post = Posts(
         subreddit: element['data']['subreddit'],
         selftext: element['data']['selftext'],
@@ -396,10 +394,63 @@ class NetworkHelper {
         thumbnail_width: parseredditInts(element['data']['thumbnail_width']),
         score: element['data']['score'],
         thumbnail: element['data']['thumbnail'],
-        post_hint:
-            ((element['data'] as Map<String, dynamic>).containsKey('post_hint'))
-                ? element['data']['post_hint']
-                : null,
+        post_hint: parseredditStrings(element['data']['post_hint']),
+        is_self: element['data']['is_self'],
+        created: element['data']['created'],
+        selftext_html: element['data']['selftext_html'],
+        preview: parsePreview(element['data']),
+        all_awardings: parseAllAwardings(element['data']['all_awardings']),
+        subreddit_id: element['data']['subreddit_id'],
+        id: element['data']['id'],
+        author: element['data']['author'],
+        num_comments: element['data']['num_comments'],
+        permalink: element['data']['permalink'],
+        url: element['data']['url'],
+        subreddit_subscribers: element['data']['subreddit_subscribers'],
+        media: parseMedia(element['data']),
+        is_video: element['data']['is_video'],
+        subReddit: _subreddit,
+      );
+      _posts.add(_post);
+    }
+    return _posts;
+  }
+
+  Future<List<Posts>> fetchMoreUserPosts(String endpoint, String lastFullName) async {
+    String _token = (await _getAccessToken())!;
+    var response = await http.get(
+        Uri.parse('https://oauth.reddit.com/$endpoint?raw_json=1&limit=5&after=$lastFullName'),
+        headers: {
+          'authorization': 'bearer ' + _token,
+          'User-Agent':
+          'android:eu.epitech.redditech.redditech:v0.0.1 (by /u/M0nkeyPyth0n)',
+        });
+    if (response.statusCode == 401) {
+      throw ExceptionLoginInvalid();
+    }
+    Map<String, dynamic> resp = jsonDecode(response.body);
+
+    List<Posts> _posts = [];
+    List<dynamic> toto = resp['data']['children'];
+    for (var element in toto) {
+      SubReddit _subreddit =
+      await fetchSubredditData(element['data']['subreddit']);
+      Posts _post = Posts(
+        subreddit: element['data']['subreddit'],
+        selftext: element['data']['selftext'],
+        author_fullname: element['data']['author_fullname'],
+        title: element['data']['title'],
+        subreddit_name_prefixed: element['data']['subreddit_name_prefixed'],
+        downs: element['data']['downs'],
+        thumbnail_height: parseredditInts(element['data']['thumbnail_height']),
+        name: element['data']['name'],
+        upvote_ratio: element['data']['upvote_ratio'],
+        ups: element['data']['ups'],
+        total_awards_received: element['data']['total_awards_received'],
+        thumbnail_width: parseredditInts(element['data']['thumbnail_width']),
+        score: element['data']['score'],
+        thumbnail: element['data']['thumbnail'],
+        post_hint: parseredditStrings(element['data']['post_hint']),
         is_self: element['data']['is_self'],
         created: element['data']['created'],
         selftext_html: element['data']['selftext_html'],

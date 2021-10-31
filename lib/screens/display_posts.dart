@@ -23,6 +23,8 @@ class _DisplayPostsState extends State<DisplayPosts> {
   final NetworkHelper _networkHelper = NetworkHelper();
   bool _initFinished = false;
   List<Posts> _posts = [];
+  late ScrollController _scrollController;
+  bool _isLoadingMore = false;
 
   Future<void> initPosts() async {
     try {
@@ -35,9 +37,35 @@ class _DisplayPostsState extends State<DisplayPosts> {
     setState(() {});
   }
 
+  Future<void> loadMorePosts() async {
+    try {
+      _isLoadingMore = true;
+      _posts.addAll(await _networkHelper.fetchMoreUserPosts(
+          widget.endpoint, _posts.elementAt(_posts.length - 1).subreddit_id));
+      _isLoadingMore = false;
+    } on ExceptionLoginInvalid catch (e) {
+      Navigator.pushReplacementNamed(context, '/login',
+          arguments: {'error': 'Authentication expired.'});
+    }
+    _initFinished = true;
+    setState(() {});
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      if (_isLoadingMore == false) {
+        loadMorePosts();
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     initPosts();
   }
 
@@ -46,8 +74,8 @@ class _DisplayPostsState extends State<DisplayPosts> {
       return Column(
         children: [
           Text(_posts.elementAt(index).selftext, maxLines: 10),
-          Padding(padding: EdgeInsets.all(8)),
-          Text('Read more...',
+          const Padding(padding: EdgeInsets.all(8)),
+          const Text('Read more...',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         ],
       );
@@ -62,6 +90,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
       return const LoadingDataScreen();
     } else {
       return ListView.separated(
+        controller: _scrollController,
         itemCount: _posts.length,
         shrinkWrap: true,
         separatorBuilder: (context, index) => const Divider(
@@ -79,7 +108,9 @@ class _DisplayPostsState extends State<DisplayPosts> {
                 child: Column(
                   children: <Widget>[
                     ListTile(
-                      leading: iconWidget(_posts.elementAt(index).subReddit.community_icon, _posts.elementAt(index).subReddit.icon_img),
+                      leading: iconWidget(
+                          _posts.elementAt(index).subReddit.community_icon,
+                          _posts.elementAt(index).subReddit.icon_img),
                       title: Text(_posts
                           .elementAt(index)
                           .subReddit
@@ -117,7 +148,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
                         ],
                       ),
                     _displayText(index),
-                    Padding(padding: EdgeInsets.all(5)),
+                    const Padding(padding: EdgeInsets.all(5)),
                     ListTile(
                       title: Row(
                         children: [
