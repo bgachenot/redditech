@@ -98,6 +98,7 @@ class _SearchViewState extends State<SearchView> {
               padding: const EdgeInsets.all(8.0),
               child: Scrollbar(
                 isAlwaysShown: true,
+                controller: _scrollController,
                 child: ListView.builder(
                   controller: _scrollController,
                   itemCount: _subReddits.length,
