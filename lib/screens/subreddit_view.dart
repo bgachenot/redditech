@@ -110,7 +110,7 @@ class _SubRedditViewState extends State<SubRedditView> {
             children: [
               _displayIcons(),
               Text(_subreddit.title),
-              Text(_subreddit.subscribers.toString() + ' members'),
+              Text(prettyNumber(_subreddit.subscribers) + ' members'),
               if (_subreddit.public_description != null)
                 ExpandableText(
                   _subreddit.public_description!,
