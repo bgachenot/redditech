@@ -1,3 +1,4 @@
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:redditech/helpers/network.dart';
@@ -80,13 +81,15 @@ class _DisplayPostsState extends State<DisplayPosts> {
 
   Widget _displayText(index) {
     if (_posts.elementAt(index).selftext.length > 300) {
-      return Column(
-        children: [
-          Text(_posts.elementAt(index).selftext, maxLines: 10),
-          const Padding(padding: EdgeInsets.all(8)),
-          const Text('Read more...',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        ],
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ExpandableText(
+          _posts.elementAt(index).selftext,
+          expandText: 'show more',
+          collapseText: 'show less',
+          maxLines: 5,
+          linkColor: Colors.blue,
+        ),
       );
     } else {
       return Text(_posts.elementAt(index).selftext);
@@ -119,8 +122,7 @@ class _DisplayPostsState extends State<DisplayPosts> {
                 children: [
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, '/post',
-                          arguments: {'post': _posts.elementAt(index)});
+                      //Navigator.pushNamed(context, '/post', arguments: {'post': _posts.elementAt(index)});
                     },
                     child: Column(
                       children: <Widget>[

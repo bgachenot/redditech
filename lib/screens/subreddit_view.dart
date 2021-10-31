@@ -1,7 +1,10 @@
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:redditech/helpers/network.dart';
 import 'package:redditech/helpers/utils.dart';
 import 'package:redditech/model/subreddit.dart';
+import 'package:redditech/screens/feed_view.dart';
+import 'package:redditech/screens/subreddit_posts_view.dart';
 import 'package:redditech/widgets/subreddit_banner.dart';
 import 'package:redditech/widgets/subreddit_icon.dart';
 
@@ -77,11 +80,12 @@ class _SubRedditViewState extends State<SubRedditView> {
   Widget _displayIcons() {
     return Stack(
       children: [
-        subredditBanner(_subreddit.mobile_banner_image, _subreddit.banner_img, _subreddit.banner_background_image),
+        subredditBanner(_subreddit.mobile_banner_image, _subreddit.banner_img,
+            _subreddit.banner_background_image),
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 35, 0, 5),
-          child: subredditIcon(_subreddit.community_icon, _subreddit.icon_img)
-        ),
+            padding: const EdgeInsets.fromLTRB(20, 35, 0, 5),
+            child:
+                subredditIcon(_subreddit.community_icon, _subreddit.icon_img)),
       ],
     );
   }
@@ -99,16 +103,24 @@ class _SubRedditViewState extends State<SubRedditView> {
           _getAction(),
         ],
       ),
-      body: Scrollbar(
-        controller: _scrollController,
-        child: Column(
-          children: [
-            _displayIcons(),
-            Text(_subreddit.title),
-            Text(_subreddit.subscribers.toString() + ' members'),
-            if (_subreddit.public_description != null)
-              Text(_subreddit.public_description!),
-          ],
+      body: SingleChildScrollView(
+        child: Scrollbar(
+          controller: _scrollController,
+          child: Column(
+            children: [
+              _displayIcons(),
+              Text(_subreddit.title),
+              Text(_subreddit.subscribers.toString() + ' members'),
+              if (_subreddit.public_description != null)
+                ExpandableText(
+                  _subreddit.public_description!,
+                  expandText: 'show more',
+                  collapseText: 'show less',
+                  maxLines: 1,
+                  linkColor: Colors.blue,
+                ),
+            ],
+          ),
         ),
       ),
     );

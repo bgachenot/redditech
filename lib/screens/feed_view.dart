@@ -14,33 +14,40 @@ class _FeedViewState extends State<FeedView>
     Tab(
       child: Text(
         'Best',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
     ),
     Tab(
       child: Text(
         'Top',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
     ),
     Tab(
       child: Text(
         'New',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
     ),
-    // Tab(
-    //   child: Text(
-    //     'Random',
-    //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-    //   ),
-    // ),
+    Tab(
+      child: Text(
+        'Rising',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+    ),
+    Tab(
+      child: Text(
+        'controversial',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+      ),
+    ),
   ];
   static const List<String> _myEndpoints = [
     "best",
     "top",
     "new",
-    //"random",
+    "rising",
+    "controversial",
   ];
   late TabController _tabController;
 
@@ -82,7 +89,8 @@ class _FeedViewState extends State<FeedView>
           DisplayPosts(endpoint: 'best'),
           DisplayPosts(endpoint: 'top'),
           DisplayPosts(endpoint: 'new'),
-          //DisplayPosts(endpoint: 'random'),
+          DisplayPosts(endpoint: 'rising'),
+          DisplayPosts(endpoint: 'controversial'),
         ],
       ),
     );
