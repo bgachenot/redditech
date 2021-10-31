@@ -44,30 +44,19 @@ class _TrophiesViewState extends State<TrophiesView> {
           title: const Text(
             "Your Trophies",
             style: TextStyle(
-              color: Colors.black,
               fontSize: 22.0,
               fontWeight: FontWeight.bold,
             ),
           ),
           centerTitle: true,
         ),
-        backgroundColor: Colors.grey[300],
         body: RefreshIndicator(
           onRefresh: () {
             return initProfile();
           },
           child: ListView(
             children: [
-              // const Text(
-              //   'Trophies',
-              //   style: TextStyle(
-              //     color: Colors.black,
-              //     fontSize: 22.0,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              SizedBox(
-                height: 600,
+              Expanded(
                 child: ListView.builder(
                   shrinkWrap: true,
                   controller: _controllerOne,
@@ -83,20 +72,37 @@ class _TrophiesViewState extends State<TrophiesView> {
                     return Card(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Row(
+                        child: Stack(
                           children: [
                             Image.network(
                                 _trophies.elementAt(index).icon_70_url),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(_trophies.elementAt(index).name),
-                            ),//7607908D
-                            Align(
-                                alignment: Alignment.bottomLeft,
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    MediaQuery.of(context).size.width - 250,
+                                    0,
+                                    0,
+                                    0),
                                 child: Text(
-                                  _trophyAge.toString() + ' days ago',
-                                  style: const TextStyle(color: Colors.purple),
-                                )),
+                                  _trophies.elementAt(index).name,
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  MediaQuery.of(context).size.width - 100,
+                                  55,
+                                  0,
+                                  0),
+                              child: Text(
+                                _trophyAge.toString() + ' days ago',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(color: Colors.purple),
+                              ),
+                            ),
                           ],
                         ),
                       ),
