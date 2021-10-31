@@ -141,19 +141,31 @@ class _DisplayPostsState extends State<DisplayPosts> {
                         },
                       ),
                       if (_posts.elementAt(index).all_awardings != null)
-                        ListTile(
-                          tileColor: Colors.grey[300],
-                          leading: const Text('Show rewards'),
-                          trailing: const Icon(Icons.arrow_forward),
-                          onTap: () {},
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.width / 1.5, 0, 0, 0),
+                          child: Text(_posts
+                              .elementAt(index)
+                              .all_awardings!
+                              .length
+                              .toString() +
+                              ' rewards'),
                         ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        child: ExpandableText(
+                          _posts.elementAt(index).title,
+                          expandText: 'show more',
+                          collapseText: 'show less',
+                          maxLines: 6,
+                          linkColor: Colors.blue,
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ),
                       if (_posts.elementAt(index).is_video &&
                           _posts.elementAt(index).media!.reddit_video)
                         VideoWidget(
-                          url: _posts
-                              .elementAt(index)
-                              .media!
-                              .reddit_video_url!,
+                          url: _posts.elementAt(index).media!.reddit_video_url!,
                           play: true,
                         ),
                       if (_posts.elementAt(index).post_hint != null &&
@@ -162,14 +174,11 @@ class _DisplayPostsState extends State<DisplayPosts> {
                           children: [
                             ListTile(
                               title: Text(_posts.elementAt(index).title),
-                              subtitle: Image.network(_posts
-                                  .elementAt(index)
-                                  .preview!
-                                  .source_url),
+                              subtitle: Image.network(
+                                  _posts.elementAt(index).preview!.source_url),
                             ),
                           ],
                         ),
-                      _displayText(index),
                       const Padding(padding: EdgeInsets.all(5)),
                       ListTile(
                         title: Row(

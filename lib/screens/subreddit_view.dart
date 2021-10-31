@@ -19,20 +19,6 @@ class _SubRedditViewState extends State<SubRedditView> {
   final NetworkHelper _networkHelper = NetworkHelper();
   Map _data = {};
   late SubReddit _subreddit;
-  late ScrollController _scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    //_scrollController.addListener(_scrollListener);
-  }
-
-  @override
-  void dispose() {
-    //_scrollController.removeListener(_scrollListener);
-    super.dispose();
-  }
 
   Widget _getAction() {
     if (_subreddit.user_is_subscriber == false) {
@@ -77,19 +63,6 @@ class _SubRedditViewState extends State<SubRedditView> {
     );
   }
 
-  Widget _displayIcons() {
-    return Stack(
-      children: [
-        subredditBanner(_subreddit.mobile_banner_image, _subreddit.banner_img,
-            _subreddit.banner_background_image),
-        Padding(
-            padding: const EdgeInsets.fromLTRB(20, 35, 0, 5),
-            child:
-                subredditIcon(_subreddit.community_icon, _subreddit.icon_img)),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _data = _data.isNotEmpty
@@ -104,7 +77,8 @@ class _SubRedditViewState extends State<SubRedditView> {
         ],
       ),
       body: SingleChildScrollView(
-        child: SizedBox(height: MediaQuery.of(context).size.height,
+        child: SizedBox(
+            height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: SubredditPostsView()),
       ),
