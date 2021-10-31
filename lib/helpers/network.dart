@@ -31,7 +31,19 @@ class NetworkHelper {
 
   Future<void> _writeAccessToken(accessToken) async {
     const storage = FlutterSecureStorage();
-    return await storage.write(key: 'access_token', value: accessToken);
+    await storage.write(key: 'access_token', value: accessToken);
+  }
+
+   Future<void> _deleteAllSecureStorage() async {
+    const storage = FlutterSecureStorage();
+    await storage.deleteAll();
+  }
+
+  Future<bool> disconnectUser() async {
+    String? _token = await _getAccessToken();
+
+    await _deleteAllSecureStorage();
+    return true;
   }
 
   Future<bool> loginImplicitGrantFlow() async {

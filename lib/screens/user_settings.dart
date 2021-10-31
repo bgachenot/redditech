@@ -135,6 +135,16 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                   'Personalize recommendations based on your activity with our partners',
                   'third_party_site_data_personalized_content',
                   _userPreferencies.third_party_site_data_personalized_content),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                  onPressed: () async {
+                    await _networkHelper.disconnectUser();
+                    Navigator.pushNamed(context, '/');
+                  },
+                  child: const Text(
+                    'Disconnect from Reddit',
+                    style: TextStyle(fontSize: 18),
+                  )),
               (_errorMsg != null)
                   ? Padding(
                       padding: const EdgeInsets.all(40.0),
